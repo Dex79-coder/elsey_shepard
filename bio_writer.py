@@ -89,7 +89,7 @@ def format_age_approx(n: int) -> str:
 
 
 # ---------------------------------------------------------------------------
-# Pronouns and ordinals
+# Pronouns, ordinals, simple grammar helpers
 # ---------------------------------------------------------------------------
 
 def _pronouns(gender: Optional[str]) -> Dict[str, str]:
@@ -101,6 +101,11 @@ def _pronouns(gender: Optional[str]) -> Dict[str, str]:
     if gender and gender.lower().startswith("f"):
         return {"subj": "she", "obj": "her", "poss": "her"}
     return {"subj": "they", "obj": "them", "poss": "their"}
+
+
+def _was_were(subj: str) -> str:
+    """Return the correct copula ('was'/'were') for a given subject pronoun."""
+    return "were" if subj == "they" else "was"
 
 
 _ORDINALS = {
@@ -180,14 +185,15 @@ def _age_phrase_at_marriage(birth: Optional[str], event_date: Optional[str], eve
     birth_year = _extract_year(birth) if birth else None
     if not birth_year or not event_year:
         return None
+    verb = _was_were(pron["subj"])
     if not approx and birth and event_date:
         bdt = _parse_iso_date(birth)
         edt = _parse_iso_date(event_date)
         if bdt and edt:
             age = calc_age_exact(bdt, edt)
-            return f"{pron['subj']} was {format_age_exact(age)}"
+            return f"{pron['subj']} {verb} {format_age_exact(age)}"
     age = calc_age_approx(birth_year, event_year)
-    return f"{pron['subj']} was {format_age_approx(age)}"
+    return f"{pron['subj']} {verb} {format_age_approx(age)}"
 
 
 def _format_spouses_block(person: dict, person_pron: Dict[str, str]) -> str:
@@ -235,9 +241,12 @@ def _format_spouses_block(person: dict, person_pron: Dict[str, str]) -> str:
 
         marriage = sp.get("marriage", {})
         date_phrase, m_year = _describe_date(marriage.get("date"), marriage.get("approx"))
+        m_place = marriage.get("place")
         if date_phrase:
             approx_flag = not bool(_parse_iso_date(marriage.get("date")))
             text += f" They were married {date_phrase}"
+            if m_place:
+                text += f" in {m_place}"
             age_phrases: List[str] = []
             sp_age = _age_phrase_at_marriage(bdate, marriage.get("date"), m_year, sp_pron, approx_flag)
             if sp_age:
@@ -251,6 +260,8 @@ def _format_spouses_block(person: dict, person_pron: Dict[str, str]) -> str:
             text += "."
         else:
             text += " No record of the marriage date has been found."
+            if m_place:
+                text += f" The marriage took place in {m_place}."
 
         if sp.get("children_estimate"):
             text += f" Together they had at least {sp['children_estimate']} children."
@@ -302,7 +313,7 @@ def _format_deaths_block(person: dict, person_pron: Dict[str, str]) -> str:
         burial = sp.get("burial", {})
         bplace = burial.get("place")
         if bplace and bplace != place:
-            death_sentence += f" {sp_pron['subj'].capitalize()} was buried in {bplace}."
+            death_sentence += f" {sp_pron['subj'].capitalize()} {_was_were(sp_pron['subj'])} buried in {bplace}."
         events.append((year, death_sentence))
 
     # Person's own death
@@ -323,7 +334,7 @@ def _format_deaths_block(person: dict, person_pron: Dict[str, str]) -> str:
         burial = person.get("burial", {})
         bplace = burial.get("place")
         if bplace and bplace != place:
-            death_sentence += f" {person_pron['subj'].capitalize()} was buried in {bplace}."
+            death_sentence += f" {person_pron['subj'].capitalize()} {_was_were(person_pron['subj'])} buried in {bplace}."
         events.append((year if year else 9999, death_sentence))
     else:
         events.append((9999, "No record of death has been found."))
@@ -363,16 +374,16 @@ def build_biography(person: dict) -> str:
 
 
 # ---------------------------------------------------------------------------
-# Examples
+# CLI (optional helper to read JSON/JSONL directly)
 # ---------------------------------------------------------------------------
 
 if __name__ == "__main__":
     import json, sys, pathlib
 
-    # Uso:
-    # python bio_writer.py person.json   -> imprime 1 biografia
-    # python bio_writer.py people.json   -> imprime várias (lista de pessoas)
-    # python bio_writer.py               -> tenta abrir "person.json" no diretório atual
+    # Usage:
+    # python bio_writer.py person.json   -> prints 1 biography
+    # python bio_writer.py people.json   -> prints several (list of people)
+    # python bio_writer.py               -> tries to open "person.json" in current dir
 
     path = sys.argv[1] if len(sys.argv) > 1 else "person.json"
     data = json.loads(pathlib.Path(path).read_text(encoding="utf-8"))
