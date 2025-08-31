@@ -3,6 +3,8 @@
 ==============================================
 
 1-Entrada deverá ser filtrada:
-Nome, data de nascimento, local de nascimento, filiação (pai e mãe), esposa (se houver((data de nascimento da esposa)local de nascimento da esposa)) data do casamento, local do casamento, idade dos noivos ao se casarem (fazer cálculo). quantidade estimada de filhos que tiveram. Repetir o processo para outras esposas. Nome do falecido (em ordem cronológica(do mais antigo para o mais recente)), data de falecimento, local de falecimento, idade ao falecer (fazer cálculo). Repetir o processo para os outros mencionados acima.
+Número do ancestral. Nome, data de nascimento, local de nascimento, filiação (pai e mãe), esposa (se houver((data de nascimento da esposa)local de nascimento da esposa)) data do casamento, local do casamento, idade dos noivos ao se casarem (fazer cálculo). quantidade estimada de filhos que tiveram. Repetir o processo para outras esposas. Nome do falecido (em ordem cronológica(do mais antigo para o mais recente)), data de falecimento, local de falecimento, idade ao falecer (fazer cálculo). Repetir o processo para os outros mencionados acima.
 
 Acima estão todos os dados importantes que precisamos manter, ignorar todo o resto. Importante é não misturar os dados e manter a coerencia, cada um com sua respectivas datas de nascimento e falecimento, o mesmo para os casais.
+
+
