@@ -69,9 +69,40 @@ _ORDINALS = {
 }
 
 
-def _ordinal(n: int) -> str:
+def     _ordinal(n: int) -> str:
     return _ORDINALS.get(n, f"{n}th")
 
+def _norm_place(s: str | None) -> str:
+    """Normaliza lugares para comparação (casefold + trim)."""
+    return (s or "").strip().casefold()
+
+def _is_likely_deceased(person: dict) -> bool:
+    """Retorna True se a pessoa tem óbito registrado OU se idade estimada >= limiar."""
+    # 1) Óbito explícito
+    death = person.get("death") or {}
+    if death.get("date") or death.get("place"):
+        return True
+
+    # 2) Sem óbito: calcula idade atual
+    d_b = _parse_ymd((person.get("birth") or {}).get("date"))
+    if d_b:
+        today = date.today()
+        age = _age_on(d_b, today)
+        if age is not None and age >= AGE_ASSUME_DECEASED_YEARS:
+            return True
+
+    return False
+
+def _children_intro(person: dict, P: Dict[str, str]) -> str:
+    verb = "were" if _is_likely_deceased(person) else "are"
+    return f"{P['poss'].capitalize()} children {verb}:"
+
+# ---------------------------------------------------------------------------
+# Configurações globais
+# ---------------------------------------------------------------------------
+
+# Considera "falecido" se idade estimada >= este valor e não houver óbito registrado
+AGE_ASSUME_DECEASED_YEARS = 100
 
 # ---------------------------------------------------------------------------
 # Formatting helpers
@@ -97,22 +128,41 @@ def _format_birth_parents(person: dict, P: Dict[str, str]) -> str:
         sentence += f" on {when}"
     elif place:
         sentence += f" in {place}"
+    sentence += "."
 
+    # --- pais ---
     parents = person.get("parents") or {}
-    father = parents.get("father")
-    mother = parents.get("mother")
+    father = (
+        parents.get("father") or
+        parents.get("father_name") or
+        person.get("father") or
+        person.get("father_name")
+    )
+    mother = (
+        parents.get("mother") or
+        parents.get("mother_name") or
+        person.get("mother") or
+        person.get("mother_name")
+    )
+
     if father or mother:
+        # vivo ou falecido?
+        alive = not bool(person.get("death"))
+        verb = "is" if alive else "was"
+
         relation = "son" if P["subj"] == "He" else ("daughter" if P["subj"] == "She" else "child")
         if father and mother:
-            parents_phrase = f"{relation} of {father} and {mother}"
+            parents_phrase = f"{verb} the {relation} of {father} and {mother}."
         elif father:
-            parents_phrase = f"{relation} of {father}"
+            parents_phrase = f"{verb} the {relation} of {father}."
         else:
-            parents_phrase = f"{relation} of {mother}"
-        sentence += f", {parents_phrase}"
+            parents_phrase = f"{verb} the {relation} of {mother}."
 
-    sentence += "."
+        sentence += f" {P['subj']} {parents_phrase}"
+
     return sentence
+
+
 
 
 def _spouse_intro(spouse: dict, P: Dict[str, str], idx: int, total: int) -> str:
@@ -174,33 +224,45 @@ def _children_clause(spouse: dict) -> str:
 
 
 def _death_sentence(person: dict, P: Dict[str, str]) -> Optional[str]:
-    b = (person.get("birth") or {}).get("date")
-    d = person.get("death") or {}
-    d_d = _parse_ymd(d.get("date"))
-    when = _format_date(d_d) if d_d else None
-    place = d.get("place")
-    age = _age_on(_parse_ymd(b), d_d)
+    birth = person.get("birth") or {}
+    b_place = birth.get("place")
 
-    if not when and not place:
+    death = person.get("death") or {}
+    d_d = _parse_ymd(death.get("date"))
+    when = _format_date(d_d) if d_d else None
+    d_place = death.get("place")
+
+    age = _age_on(_parse_ymd(birth.get("date")), d_d)
+
+    if not when and not d_place:
         return None
 
     core = f"{_safe_name(person)} died"
-    if when and place:
-        core += f" on {when} in {place}"
+    if when and d_place:
+        core += f" on {when} in {d_place}"
     elif when:
         core += f" on {when}"
     else:
-        core += f" in {place}"
+        core += f" in {d_place}"
 
     if age is not None:
         core += f", at the age of {age}."
     else:
         core += "."
 
-    burial = (person.get("burial") or {}).get("place")
-    if burial and (not place or burial != place):
-        core += f" {P['subj']} was buried in {burial}."
+    burial_place = (person.get("burial") or {}).get("place")
+
+    # Evita redundância:
+    # 1) Se sepultamento = local do óbito → já era coberto antes (não repetir).
+    # 2) NOVO: se sepultamento = local de nascimento → não repetir.
+    if burial_place:
+        same_as_death = _norm_place(burial_place) == _norm_place(d_place)
+        same_as_birth = _norm_place(burial_place) == _norm_place(b_place)
+        if not same_as_death and not same_as_birth:
+            core += f" {P['subj']} was buried in {burial_place}."
+
     return core
+
 
 
 def _death_tuple(entry: dict | None) -> tuple[date | None, str]:
@@ -295,10 +357,15 @@ def build_biography(person: dict) -> str:
 
     # Lista Henry de filhos (tabulada), após a biografia
     children_block = _format_children_list(children)
-    if children_block:
-        parts.append(children_block)
 
-    body = " ".join(s.strip() for s in parts if s and s.strip())
+    # Monta o corpo principal (sem a parte dos filhos)
+    main_text = " ".join(s.strip() for s in parts if s and s.strip())
+
+    if children_block:
+        body = f"{main_text}\n\n\tTheir children were:\n\n{children_block}"
+    else:
+        body = main_text
+
     return header + "\n\n" + body
 
 
