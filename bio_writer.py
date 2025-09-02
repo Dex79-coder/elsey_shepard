@@ -1,111 +1,66 @@
 """Utilities to build brief genealogy biographies following a strict format.
 
-This module exposes :func:`build_biography` which accepts a dictionary with
-information about an ancestor and their relationships and returns a formatted
-string ready to be pasted elsewhere.
+Public API:
+    - build_biography(person: dict) -> str
 
-The implementation purposely avoids external dependencies and relies only on
-Python's standard library. Dates are expected in ISO format (``YYYY-MM-DD``)
-or as a plain year string (``YYYY``). Approximate dates (e.g. ``"about 1929"``)
-are preserved as is when provided.
+Notes
+-----
+- Apenas biblioteca padrão do Python.
+- Datas esperadas em ISO YYYY-MM-DD (ou None). Se inválidas, são ignoradas.
+- Regras Shepard aplicadas:
+  * Se não houver casamento e nem filhos: "No records of marriage or children have been found to date."
+  * Óbitos aparecem só ao final da biografia, em ordem cronológica (mais antigo → mais recente).
+  * Se não houver registros de óbito para todos (pessoa + cônjuges), usar frase unificada.
+  * Lista Henry dos filhos: apenas número + nome (tabulada), após a biografia.
 """
 
 from __future__ import annotations
 
-# No external libraries are required; only the standard library is used.
 from datetime import date
-import re
-from typing import Dict, Iterable, List, Optional, Tuple
+from typing import Dict, Iterable, List, Optional
 
 # ---------------------------------------------------------------------------
 # English month names (avoid locale-dependent %B)
 # ---------------------------------------------------------------------------
 _MONTHS_EN = [
     "", "January", "February", "March", "April", "May", "June",
-    "July", "August", "September", "October", "November", "December"
+    "July", "August", "September", "October", "November", "December",
 ]
 
 # ---------------------------------------------------------------------------
-# Date helpers
+# Helpers
 # ---------------------------------------------------------------------------
 
-def _parse_iso_date(value: str) -> Optional[date]:
-    """Return ``date`` if ``value`` is in ``YYYY-MM-DD`` format, else ``None``."""
-    if not value:
+def _pronouns(sex: str | None) -> Dict[str, str]:
+    s = (sex or "").strip().upper()
+    if s == "M":
+        return {"subj": "He", "obj": "him", "poss": "his"}
+    if s == "F":
+        return {"subj": "She", "obj": "her", "poss": "her"}
+    return {"subj": "They", "obj": "them", "poss": "their"}
+
+
+def _parse_ymd(s: str | None) -> date | None:
+    if not s:
         return None
     try:
-        year, month, day = map(int, value.split("-"))
-        return date(year, month, day)
+        y, m, d = map(int, s.split("-"))
+        return date(y, m, d)
     except Exception:
         return None
 
 
-def _extract_year(value: Optional[str]) -> Optional[int]:
-    """Extract the first four-digit year from ``value`` if present."""
-    if not value:
+def _format_date(d: date) -> str:
+    return f"{d.day} {_MONTHS_EN[d.month]} {d.year}"
+
+
+def _age_on(d_birth: date | None, d_event: date | None) -> int | None:
+    if not d_birth or not d_event:
         return None
-    match = re.search(r"(\d{4})", value)
-    if match:
-        return int(match.group(1))
-    return None
-
-
-def format_date_long(value: str) -> str:
-    """Return a human readable date (English months).
-    ``value`` may be ``YYYY-MM-DD`` or ``YYYY``. Approximate textual values are
-    returned unchanged.
-    """
-    dt = _parse_iso_date(value)
-    if dt:
-        return f"{dt.day} {_MONTHS_EN[dt.month]} {dt.year}"
-    if re.fullmatch(r"\d{4}", value):
-        return value
-    return value
-
-
-# ---------------------------------------------------------------------------
-# Age calculations
-# ---------------------------------------------------------------------------
-
-def calc_age_exact(birth: date, event: date) -> int:
-    """Return the age in full years between ``birth`` and ``event``."""
-    years = event.year - birth.year
-    if (event.month, event.day) < (birth.month, birth.day):
+    years = d_event.year - d_birth.year
+    if (d_event.month, d_event.day) < (d_birth.month, d_birth.day):
         years -= 1
     return years
-
-
-def calc_age_approx(birth_year: int, event_year: int) -> int:
-    """Return the difference in years between ``birth_year`` and ``event_year``."""
-    return event_year - birth_year
-
-
-def format_age_exact(n: int) -> str:
-    return str(n)
-
-
-def format_age_approx(n: int) -> str:
-    return f"approximately {n}"
-
-
-# ---------------------------------------------------------------------------
-# Pronouns, ordinals, simple grammar helpers
-# ---------------------------------------------------------------------------
-
-def _pronouns(gender: Optional[str]) -> Dict[str, str]:
-    """Return a dictionary with pronouns for ``gender``.
-    Gender may be ``'M'``/``'male'`` or ``'F'``/``'female'``. Any other value → neutral.
-    """
-    if gender and gender.lower().startswith("m"):
-        return {"subj": "he", "obj": "him", "poss": "his"}
-    if gender and gender.lower().startswith("f"):
-        return {"subj": "she", "obj": "her", "poss": "her"}
-    return {"subj": "they", "obj": "them", "poss": "their"}
-
-
-def _was_were(subj: str) -> str:
-    """Return the correct copula ('was'/'were') for a given subject pronoun."""
-    return "were" if subj == "they" else "was"
 
 
 _ORDINALS = {
@@ -113,240 +68,159 @@ _ORDINALS = {
     6: "sixth", 7: "seventh", 8: "eighth", 9: "ninth", 10: "tenth",
 }
 
+
 def _ordinal(n: int) -> str:
     return _ORDINALS.get(n, f"{n}th")
 
 
 # ---------------------------------------------------------------------------
-# Formatting blocks
+# Formatting helpers
 # ---------------------------------------------------------------------------
 
-def _describe_date(date_str: Optional[str], approx: Optional[str]) -> Tuple[Optional[str], Optional[int]]:
-    """Return (phrase, year) describing the date or approx."""
-    if date_str:
-        dt = _parse_iso_date(date_str)
-        if dt:
-            return f"on {format_date_long(date_str)}", dt.year
-        year = _extract_year(date_str)
-        if year:
-            return f"in {year}", year
-    if approx:
-        year = _extract_year(approx)
-        if re.fullmatch(r"\d{4}", approx.strip()):
-            return f"in {approx.strip()}", year
-        return approx, year
-    return None, None
+def _safe_name(x: dict | None, fallback: str = "Unknown") -> str:
+    if not isinstance(x, dict):
+        return fallback
+    n = x.get("name")
+    return n.strip() if isinstance(n, str) and n.strip() else fallback
 
 
-def _format_birth_block(person: dict, person_pron: Dict[str, str]) -> str:
-    birth = person.get("birth", {})
-    sentence = f"{person['name']} was born"
-    date_str = birth.get("date")
+def _format_birth_parents(person: dict, P: Dict[str, str]) -> str:
+    birth = person.get("birth") or {}
+    d_b = _parse_ymd(birth.get("date"))
+    when = _format_date(d_b) if d_b else None
     place = birth.get("place")
 
-    if date_str:
-        dt = _parse_iso_date(date_str)
-        if dt:
-            sentence += f" on {format_date_long(date_str)}"
+    sentence = f"{_safe_name(person)} was born"
+    if when and place:
+        sentence += f" on {when}, in {place}"
+    elif when:
+        sentence += f" on {when}"
+    elif place:
+        sentence += f" in {place}"
+
+    parents = person.get("parents") or {}
+    father = parents.get("father")
+    mother = parents.get("mother")
+    if father or mother:
+        relation = "son" if P["subj"] == "He" else ("daughter" if P["subj"] == "She" else "child")
+        if father and mother:
+            parents_phrase = f"{relation} of {father} and {mother}"
+        elif father:
+            parents_phrase = f"{relation} of {father}"
         else:
-            year = _extract_year(date_str)
-            if year:
-                sentence += f" in {year}"
-    if place:
-        if date_str:
-            sentence += f", in {place}"
-        else:
-            sentence += f" in {place}"
+            parents_phrase = f"{relation} of {mother}"
+        sentence += f", {parents_phrase}"
+
     sentence += "."
     return sentence
 
 
-def _format_parents_block(person: dict, person_pron: Dict[str, str]) -> str:
-    parents = person.get("parents") or {}
-    father = parents.get("father")
-    mother = parents.get("mother")
-    if not father and not mother:
-        return ""
-    if person_pron["subj"] == "she":
-        relation = "Daughter"
-    elif person_pron["subj"] == "he":
-        relation = "Son"
+def _spouse_intro(spouse: dict, P: Dict[str, str], idx: int, total: int) -> str:
+    b = spouse.get("birth") or {}
+    d_b = _parse_ymd(b.get("date"))
+    when_b = _format_date(d_b) if d_b else None
+    place_b = b.get("place")
+
+    if total == 1:
+        head = f"{P['poss'].capitalize()} spouse was {_safe_name(spouse)}"
     else:
-        relation = "Child"
-    if father and mother:
-        return f"{relation} of {father} and {mother}."
-    if father:
-        return f"{relation} of {father}."
-    return f"{relation} of {mother}."
+        head = f"{P['poss'].capitalize()} {_ordinal(idx)} spouse was {_safe_name(spouse)}"
 
-
-def _age_phrase_at_marriage(birth: Optional[str], event_date: Optional[str], event_year: Optional[int],
-                            pron: Dict[str, str], approx: bool) -> Optional[str]:
-    birth_year = _extract_year(birth) if birth else None
-    if not birth_year or not event_year:
-        return None
-    verb = _was_were(pron["subj"])
-    if not approx and birth and event_date:
-        bdt = _parse_iso_date(birth)
-        edt = _parse_iso_date(event_date)
-        if bdt and edt:
-            age = calc_age_exact(bdt, edt)
-            return f"{pron['subj']} {verb} {format_age_exact(age)}"
-    age = calc_age_approx(birth_year, event_year)
-    return f"{pron['subj']} {verb} {format_age_approx(age)}"
-
-
-def _format_spouses_block(person: dict, person_pron: Dict[str, str]) -> str:
-    spouses = person.get("spouses") or []
-    children = person.get("children") or []
-    if not spouses:
-        if not children:
-            return "No records of marriage or children have been found to date."
-        return "No records of marriage have been found to date."
-
-    def marriage_sort_key(sp: dict) -> int:
-        m = sp.get("marriage", {})
-        date_str = m.get("date")
-        approx = m.get("approx")
-        year = _extract_year(date_str) or _extract_year(approx) or 9999
-        return year
-
-    spouses_sorted = sorted(spouses, key=marriage_sort_key)
-    pieces: List[str] = []
-    for idx, sp in enumerate(spouses_sorted, start=1):
-        sp_pron = _pronouns(sp.get("gender"))
-        ord_word = _ordinal(idx)
-        birth = sp.get("birth", {})
-        bdate = birth.get("date")
-        bplace = birth.get("place")
-
-        text = f"{person_pron['poss'].capitalize()} {ord_word} spouse was {sp['name']}"
-        if bdate or bplace:
-            birth_bits: List[str] = []
-            if bdate:
-                dt = _parse_iso_date(bdate)
-                if dt:
-                    birth_bits.append(f"on {format_date_long(bdate)}")
-                else:
-                    year = _extract_year(bdate)
-                    if year:
-                        birth_bits.append(f"in {year}")
-            if bplace:
-                if birth_bits:
-                    birth_bits.append(f" in {bplace}")
-                else:
-                    birth_bits.append(f"in {bplace}")
-            text += ", who was born " + "".join(birth_bits)
-        text += "."
-
-        marriage = sp.get("marriage", {})
-        date_phrase, m_year = _describe_date(marriage.get("date"), marriage.get("approx"))
-        m_place = marriage.get("place")
-        if date_phrase:
-            approx_flag = not bool(_parse_iso_date(marriage.get("date")))
-            text += f" They were married {date_phrase}"
-            if m_place:
-                text += f" in {m_place}"
-            age_phrases: List[str] = []
-            sp_age = _age_phrase_at_marriage(bdate, marriage.get("date"), m_year, sp_pron, approx_flag)
-            if sp_age:
-                age_phrases.append(sp_age)
-            pers_age = _age_phrase_at_marriage(person.get("birth", {}).get("date"), marriage.get("date"),
-                                               m_year, person_pron, approx_flag)
-            if pers_age:
-                age_phrases.append(pers_age)
-            if age_phrases:
-                text += "; " + " and ".join(age_phrases)
-            text += "."
-        else:
-            text += " No record of the marriage date has been found."
-            if m_place:
-                text += f" The marriage took place in {m_place}."
-
-        if sp.get("children_estimate"):
-            text += f" Together they had at least {sp['children_estimate']} children."
-
-        pieces.append(text)
-
-    if not children and not any(sp.get("children_estimate") for sp in spouses_sorted):
-        pieces.append("No records of children have been found to date.")
-
-    return " ".join(pieces)
-
-
-def _age_phrase_at_death(birth: Optional[str], death: Optional[str], approx: bool) -> Optional[str]:
-    birth_year = _extract_year(birth) if birth else None
-    death_year = _extract_year(death) if death else None
-    if not birth_year or not death_year:
-        return None
-    bdt = _parse_iso_date(birth) if birth else None
-    ddt = _parse_iso_date(death) if death else None
-    if not approx and bdt and ddt:
-        age = calc_age_exact(bdt, ddt)
-        return f"at the age of {format_age_exact(age)}"
-    age = calc_age_approx(birth_year, death_year)
-    return f"at approximately {age} years of age"
-
-
-def _format_deaths_block(person: dict, person_pron: Dict[str, str]) -> str:
-    events: List[Tuple[int, str]] = []
-
-    # Collect spouse deaths
-    for sp in person.get("spouses") or []:
-        death = sp.get("death")
-        if not death or not death.get("date"):
-            continue
-        year = _extract_year(death.get("date"))
-        phrase, _ = _describe_date(death.get("date"), None)
-        if not phrase or not year:
-            continue
-        sp_pron = _pronouns(sp.get("gender"))
-        birth = sp.get("birth", {}).get("date")
-        age_phrase = _age_phrase_at_death(birth, death.get("date"), not bool(_parse_iso_date(death.get("date"))))
-        death_sentence = f"{sp['name']} died {phrase}"
-        place = death.get("place")
-        if place:
-            death_sentence += f" in {place}"
-        if age_phrase:
-            death_sentence += f", {age_phrase}"
-        death_sentence += "."
-        burial = sp.get("burial", {})
-        bplace = burial.get("place")
-        if bplace and bplace != place:
-            death_sentence += f" {sp_pron['subj'].capitalize()} {_was_were(sp_pron['subj'])} buried in {bplace}."
-        events.append((year, death_sentence))
-
-    # Person's own death
-    death = person.get("death")
-    if death and death.get("date"):
-        year = _extract_year(death.get("date"))
-        phrase, _ = _describe_date(death.get("date"), None)
-        approx = not bool(_parse_iso_date(death.get("date")))
-        birth = person.get("birth", {}).get("date")
-        age_phrase = _age_phrase_at_death(birth, death.get("date"), approx)
-        death_sentence = f"{person['name']} died {phrase}"
-        place = death.get("place")
-        if place:
-            death_sentence += f" in {place}"
-        if age_phrase:
-            death_sentence += f", {age_phrase}"
-        death_sentence += "."
-        burial = person.get("burial", {})
-        bplace = burial.get("place")
-        if bplace and bplace != place:
-            death_sentence += f" {person_pron['subj'].capitalize()} {_was_were(person_pron['subj'])} buried in {bplace}."
-        events.append((year if year else 9999, death_sentence))
+    if when_b and place_b:
+        head += f", who was born on {when_b} in {place_b}."
+    elif when_b:
+        head += f", who was born on {when_b}."
+    elif place_b:
+        head += f", who was born in {place_b}."
     else:
-        events.append((9999, "No record of death has been found."))
+        head += "."
+    return head
 
-    events.sort(key=lambda x: x[0])
-    return " ".join(sentence for _, sentence in events)
+
+def _format_marriage(person: dict, spouse: dict, P: Dict[str, str], S: Dict[str, str]) -> str:
+    m = spouse.get("marriage") or {}
+    d_m = _parse_ymd(m.get("date"))
+    d_pb = _parse_ymd((person.get("birth") or {}).get("date"))
+    d_sb = _parse_ymd((spouse.get("birth") or {}).get("date"))
+
+    when = _format_date(d_m) if d_m else ""
+    place = m.get("place")
+
+    parts: List[str] = []
+    if when and place:
+        parts.append(f"They were married on {when} in {place}")
+    elif when:
+        parts.append(f"They were married on {when}")
+    elif place:
+        parts.append(f"They were married in {place}")
+
+    a_p = _age_on(d_pb, d_m)
+    a_s = _age_on(d_sb, d_m)
+    if a_p is not None and a_s is not None and parts:
+        parts[-1] += f"; {P['subj'].lower()} was {a_p} and {S['subj'].lower()} was {a_s}."
+    elif parts:
+        parts[-1] += "."
+
+    return " ".join(parts).strip()
+
+
+def _children_clause(spouse: dict) -> str:
+    kids = spouse.get("children") or []
+    cnt = spouse.get("children_count") or spouse.get("children_estimate")
+    n = cnt if isinstance(cnt, int) else (len(kids) if kids else 0)
+    if n > 0:
+        return f"Together they had at least {n} children."
+    return "No records of children have been found to date."
+
+
+def _death_sentence(person: dict, P: Dict[str, str]) -> Optional[str]:
+    b = (person.get("birth") or {}).get("date")
+    d = person.get("death") or {}
+    d_d = _parse_ymd(d.get("date"))
+    when = _format_date(d_d) if d_d else None
+    place = d.get("place")
+    age = _age_on(_parse_ymd(b), d_d)
+
+    if not when and not place:
+        return None
+
+    core = f"{_safe_name(person)} died"
+    if when and place:
+        core += f" on {when} in {place}"
+    elif when:
+        core += f" on {when}"
+    else:
+        core += f" in {place}"
+
+    if age is not None:
+        core += f", at the age of {age}."
+    else:
+        core += "."
+
+    burial = (person.get("burial") or {}).get("place")
+    if burial and (not place or burial != place):
+        core += f" {P['subj']} was buried in {burial}."
+    return core
+
+
+def _death_tuple(entry: dict | None) -> tuple[date | None, str]:
+    """Return (death_date, sentence) for later sorting."""
+    if not isinstance(entry, dict):
+        return (None, "")
+    P = _pronouns(entry.get("gender") or entry.get("sex"))
+    sent = _death_sentence(entry, P)
+    d = _parse_ymd(((entry.get("death") or {}).get("date")))
+    return (d, sent or "")
 
 
 def _format_children_list(children: Iterable[dict]) -> str:
-    if not children:
-        return ""
-    lines = [f"\t{ch['henry_number']} {ch['name']}" for ch in children]
+    """Henry list: one per line, tab-indented: '<henry> <name>'."""
+    lines = []
+    for ch in (children or []):
+        hn = (ch or {}).get("henry_number") or ""
+        nm = _safe_name(ch, "")
+        if hn and nm:
+            lines.append(f"\t{hn} {nm}")
     return "\n".join(lines)
 
 
@@ -355,45 +229,112 @@ def _format_children_list(children: Iterable[dict]) -> str:
 # ---------------------------------------------------------------------------
 
 def build_biography(person: dict) -> str:
-    """Return the formatted biography for ``person``."""
-    person_pron = _pronouns(person.get("gender"))
-    header = f"{person['henry_number']} {person['name']}"
+    """Build the formatted biography text for a person dict."""
+    if not isinstance(person, dict):
+        return ""
 
-    parts = [
-        _format_birth_block(person, person_pron),
-        _format_parents_block(person, person_pron),
-        _format_spouses_block(person, person_pron),
-        _format_deaths_block(person, person_pron),
-    ]
-    paragraph = " ".join(filter(None, parts))
+    name = _safe_name(person)
+    henry = person.get("henry_number") or ""
+    P = _pronouns(person.get("gender") or person.get("sex"))
 
-    children_text = _format_children_list(person.get("children"))
-    if children_text:
-        return f"{header}\n{paragraph}\n\n{children_text}"
-    return f"{header}\n{paragraph}"
+    header = f"{henry} {name}".strip()
+
+    parts: List[str] = []
+    parts.append(_format_birth_parents(person, P))
+
+    spouses = person.get("spouses") or []
+    children = person.get("children") or []
+
+    # Caso sem casamento e sem filhos (regra Shepard #6)
+    if not spouses and not children:
+        parts.append("No records of marriage or children have been found to date.")
+    else:
+        # Para cada cônjuge: intro, casamento e cláusula de filhos
+        total = len(spouses)
+        for idx, sp in enumerate(spouses, start=1):
+            S = _pronouns((sp or {}).get("gender") or (sp or {}).get("sex"))
+            parts.append(_spouse_intro(sp or {}, P, idx, total))
+            m = _format_marriage(person, sp or {}, P, S)
+            if m:
+                parts.append(m)
+            parts.append(_children_clause(sp or {}))
+
+    # Óbitos (apenas no final), ordenados do mais antigo para o mais recente (regra #8)
+    death_entries: List[tuple[date | None, str]] = []
+
+    # Principal
+    d_tuple = _death_tuple(person)
+    if d_tuple[1]:
+        death_entries.append(d_tuple)
+
+    # Cônjuges
+    for sp in spouses:
+        tup = _death_tuple(sp or {})
+        if tup[1]:
+            death_entries.append(tup)
+
+    # Ordena; None vai ao fim
+    death_entries.sort(key=lambda x: (x[0] is None, x[0] or date.max))
+
+    if death_entries:
+        parts.append(" ".join([t for _, t in death_entries]))
+    else:
+        # Regra #7: ausência de óbitos unificada
+        if spouses:
+            all_names = [name] + [_safe_name(sp) for sp in spouses]
+            if len(all_names) == 2:
+                parts.append(
+                    f"No records of death have been found to date for {all_names[0]} and {all_names[1]}."
+                )
+            else:
+                parts.append(
+                    "No records of death have been found to date for "
+                    + ", ".join(all_names[:-1])
+                    + f", and {all_names[-1]}."
+                )
+
+    # Lista Henry de filhos (tabulada), após a biografia
+    children_block = _format_children_list(children)
+    if children_block:
+        parts.append(children_block)
+
+    body = " ".join(s.strip() for s in parts if s and s.strip())
+    return header + "\n\n" + body
 
 
-# ---------------------------------------------------------------------------
-# CLI (optional helper to read JSON/JSONL directly)
-# ---------------------------------------------------------------------------
+__all__ = ["build_biography"]
+
 
 if __name__ == "__main__":
-    import json, sys, pathlib
-
-    # Usage:
-    # python bio_writer.py person.json   -> prints 1 biography
-    # python bio_writer.py people.json   -> prints several (list of people)
-    # python bio_writer.py               -> tries to open "person.json" in current dir
-
-    path = sys.argv[1] if len(sys.argv) > 1 else "person.json"
-    data = json.loads(pathlib.Path(path).read_text(encoding="utf-8"))
-
-    def emit(obj):
-        print(build_biography(obj))
-        print("\n" + "-" * 80 + "\n")
-
-    if isinstance(data, list):
-        for obj in data:
-            emit(obj)
-    else:
-        emit(data)
+    # Pequeno teste manual
+    sample = {
+        "henry_number": "1.1",
+        "name": "Albert Young Shepard",
+        "gender": "M",
+        "birth": {"date": "1845-10-09", "place": "Rich Valley, Smyth County, Virginia, USA"},
+        "parents": {"father": "William R Shepard", "mother": "Asseneth Lucinda Chenault"},
+        "spouses": [
+            {
+                "name": "Mary Oregon Johnson",
+                "gender": "F",
+                "birth": {"date": "1847-03-26", "place": "Chatham Hill, Smyth County, Virginia, USA"},
+                "marriage": {"date": "1865-01-22", "place": "Smyth County, Virginia, USA"},
+                "children_count": 4,
+                "children": [
+                    {"henry_number": "1.1.1", "name": "Alice Shepard"},
+                    {"henry_number": "1.1.2", "name": "Marget Matilda Shepard"},
+                    {"henry_number": "1.1.3", "name": "Marinda E. Shepard"},
+                    {"henry_number": "1.1.4", "name": "—"},
+                ],
+            }
+        ],
+        "death": {"date": "1945-03-16", "place": "Oakley, Cassia County, Idaho, USA"},
+        "burial": {"place": "Oakley Cemetery, Oakley, Cassia County, Idaho, USA"},
+        "children": [
+            {"henry_number": "1.1.1", "name": "Alice Shepard"},
+            {"henry_number": "1.1.2", "name": "Marget Matilda Shepard"},
+            {"henry_number": "1.1.3", "name": "Marinda E. Shepard"},
+            {"henry_number": "1.1.4", "name": ""},
+        ],
+    }
+    print(build_biography(sample))
