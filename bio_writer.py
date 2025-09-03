@@ -2,11 +2,12 @@
 
 Public API:
     - build_biography(person: dict) -> str
+    - Suporta datas ISO parciais: YYYY, YYYY-MM, YYYY-MM-DD.
 
 Notes
 -----
 - Apenas biblioteca padrão do Python.
-- Datas esperadas em ISO YYYY-MM-DD (ou None). Se inválidas, são ignoradas.
+- Datas esperadas em ISO YYYY-MM-DD (ou parciais YYYY-MM / YYYY). Se inválidas, são ignoradas.
 - Regras Shepard aplicadas:
   * Se não houver casamento e nem filhos: "No records of marriage or children have been found to date."
   * Óbitos aparecem só ao final da biografia, em ordem cronológica (mais antigo → mais recente).
@@ -28,6 +29,51 @@ _MONTHS_EN = [
 ]
 
 # ---------------------------------------------------------------------------
+# Date parsing/formatting helpers (aceitam YYYY | YYYY-MM | YYYY-MM-DD)
+# ---------------------------------------------------------------------------
+
+def _parse_ymd(s: str | None) -> date | None:
+    """Retorna date apenas se for YYYY-MM-DD válido (usado para cálculos de idade)."""
+    if not s:
+        return None
+    try:
+        y, m, d = map(int, s.split("-"))
+        return date(y, m, d)
+    except Exception:
+        return None
+
+def _parse_partial(s: str | None) -> tuple[int | None, int | None, int | None]:
+    """Retorna (year, month, day), aceitando YYYY, YYYY-MM, YYYY-MM-DD."""
+    if not s:
+        return (None, None, None)
+    parts = s.split("-")
+    try:
+        y = int(parts[0])
+        m = int(parts[1]) if len(parts) >= 2 else None
+        d = int(parts[2]) if len(parts) == 3 else None
+        return (y, m, d)
+    except Exception:
+        return (None, None, None)
+
+def _format_when_iso(s: str | None) -> str | None:
+    """Formata:
+       - 'YYYY-MM-DD' → '9 March 1900'
+       - 'YYYY-MM'    → 'March 1900'
+       - 'YYYY'       → '1900'
+    """
+    y, m, d = _parse_partial(s)
+    if not y:
+        return None
+    if m and d:
+        try:
+            return f"{d} {_MONTHS_EN[m]} {y}"
+        except Exception:
+            return f"{y}"
+    if m:
+        return f"{_MONTHS_EN[m]} {y}"
+    return f"{y}"
+
+# ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
 
@@ -39,20 +85,12 @@ def _pronouns(sex: str | None) -> Dict[str, str]:
         return {"subj": "She", "obj": "her", "poss": "her"}
     return {"subj": "They", "obj": "them", "poss": "their"}
 
-
-def _parse_ymd(s: str | None) -> date | None:
-    if not s:
-        return None
-    try:
-        y, m, d = map(int, s.split("-"))
-        return date(y, m, d)
-    except Exception:
-        return None
-
-
 def _format_date(d: date) -> str:
     return f"{d.day} {_MONTHS_EN[d.month]} {d.year}"
 
+def _has_death_info(entry: dict | None) -> bool:
+    d = (entry or {}).get("death") or {}
+    return bool(d.get("date") or d.get("place"))
 
 def _age_on(d_birth: date | None, d_event: date | None) -> int | None:
     if not d_birth or not d_event:
@@ -62,25 +100,29 @@ def _age_on(d_birth: date | None, d_event: date | None) -> int | None:
         years -= 1
     return years
 
-
 _ORDINALS = {
     1: "first", 2: "second", 3: "third", 4: "fourth", 5: "fifth",
     6: "sixth", 7: "seventh", 8: "eighth", 9: "ninth", 10: "tenth",
 }
 
-
-def     _ordinal(n: int) -> str:
+def _ordinal(n: int) -> str:
     return _ORDINALS.get(n, f"{n}th")
 
 def _norm_place(s: str | None) -> str:
     """Normaliza lugares para comparação (casefold + trim)."""
     return (s or "").strip().casefold()
 
+# ---------------------------------------------------------------------------
+# Configurações globais
+# ---------------------------------------------------------------------------
+
+# Considera "falecido" se idade estimada >= este valor e não houver óbito registrado
+AGE_ASSUME_DECEASED_YEARS = 100
+
 def _is_likely_deceased(person: dict) -> bool:
     """Retorna True se a pessoa tem óbito registrado OU se idade estimada >= limiar."""
     # 1) Óbito explícito
-    death = person.get("death") or {}
-    if death.get("date") or death.get("place"):
+    if _has_death_info(person):
         return True
 
     # 2) Sem óbito: calcula idade atual
@@ -98,13 +140,6 @@ def _children_intro(person: dict, P: Dict[str, str]) -> str:
     return f"{P['poss'].capitalize()} children {verb}:"
 
 # ---------------------------------------------------------------------------
-# Configurações globais
-# ---------------------------------------------------------------------------
-
-# Considera "falecido" se idade estimada >= este valor e não houver óbito registrado
-AGE_ASSUME_DECEASED_YEARS = 100
-
-# ---------------------------------------------------------------------------
 # Formatting helpers
 # ---------------------------------------------------------------------------
 
@@ -114,11 +149,9 @@ def _safe_name(x: dict | None, fallback: str = "Unknown") -> str:
     n = x.get("name")
     return n.strip() if isinstance(n, str) and n.strip() else fallback
 
-
 def _format_birth_parents(person: dict, P: Dict[str, str]) -> str:
     birth = person.get("birth") or {}
-    d_b = _parse_ymd(birth.get("date"))
-    when = _format_date(d_b) if d_b else None
+    when = _format_when_iso(birth.get("date"))
     place = birth.get("place")
 
     sentence = f"{_safe_name(person)} was born"
@@ -162,9 +195,6 @@ def _format_birth_parents(person: dict, P: Dict[str, str]) -> str:
 
     return sentence
 
-
-
-
 def _spouse_intro(spouse: dict, P: Dict[str, str], idx: int, total: int) -> str:
     b = spouse.get("birth") or {}
     d_b = _parse_ymd(b.get("date"))
@@ -186,14 +216,17 @@ def _spouse_intro(spouse: dict, P: Dict[str, str], idx: int, total: int) -> str:
         head += "."
     return head
 
-
 def _format_marriage(person: dict, spouse: dict, P: Dict[str, str], S: Dict[str, str]) -> str:
-    m = spouse.get("marriage") or {}
-    d_m = _parse_ymd(m.get("date"))
+    marriage = spouse.get("marriage")
+    if marriage is None:
+        return ""
+
+    m = marriage or {}
+    d_m = _parse_ymd(m.get("date"))  # só calcula idade se for data completa
+    when = _format_when_iso(m.get("date")) or ""
     d_pb = _parse_ymd((person.get("birth") or {}).get("date"))
     d_sb = _parse_ymd((spouse.get("birth") or {}).get("date"))
 
-    when = _format_date(d_m) if d_m else ""
     place = m.get("place")
 
     parts: List[str] = []
@@ -213,7 +246,6 @@ def _format_marriage(person: dict, spouse: dict, P: Dict[str, str], S: Dict[str,
 
     return " ".join(parts).strip()
 
-
 def _children_clause(spouse: dict) -> str:
     kids = spouse.get("children") or []
     cnt = spouse.get("children_count") or spouse.get("children_estimate")
@@ -222,14 +254,13 @@ def _children_clause(spouse: dict) -> str:
         return f"Together they had at least {n} children."
     return "No records of children have been found to date."
 
-
 def _death_sentence(person: dict, P: Dict[str, str]) -> Optional[str]:
     birth = person.get("birth") or {}
     b_place = birth.get("place")
 
     death = person.get("death") or {}
-    d_d = _parse_ymd(death.get("date"))
-    when = _format_date(d_d) if d_d else None
+    d_d = _parse_ymd(death.get("date"))  # para cálculo de idade, se houver dia
+    when = _format_when_iso(death.get("date"))
     d_place = death.get("place")
 
     age = _age_on(_parse_ymd(birth.get("date")), d_d)
@@ -254,7 +285,7 @@ def _death_sentence(person: dict, P: Dict[str, str]) -> Optional[str]:
 
     # Evita redundância:
     # 1) Se sepultamento = local do óbito → já era coberto antes (não repetir).
-    # 2) NOVO: se sepultamento = local de nascimento → não repetir.
+    # 2) Se sepultamento = local de nascimento → não repetir.
     if burial_place:
         same_as_death = _norm_place(burial_place) == _norm_place(d_place)
         same_as_birth = _norm_place(burial_place) == _norm_place(b_place)
@@ -262,8 +293,6 @@ def _death_sentence(person: dict, P: Dict[str, str]) -> Optional[str]:
             core += f" {P['subj']} was buried in {burial_place}."
 
     return core
-
-
 
 def _death_tuple(entry: dict | None) -> tuple[date | None, str]:
     """Return (death_date, sentence) for later sorting."""
@@ -274,7 +303,6 @@ def _death_tuple(entry: dict | None) -> tuple[date | None, str]:
     d = _parse_ymd(((entry.get("death") or {}).get("date")))
     return (d, sent or "")
 
-
 def _format_children_list(children: Iterable[dict]) -> str:
     """Henry list: one per line, tab-indented: '<henry> <name>'."""
     lines = []
@@ -284,7 +312,6 @@ def _format_children_list(children: Iterable[dict]) -> str:
         if hn and nm:
             lines.append(f"\t{hn} {nm}")
     return "\n".join(lines)
-
 
 # ---------------------------------------------------------------------------
 # Public API
@@ -307,9 +334,17 @@ def build_biography(person: dict) -> str:
     spouses = person.get("spouses") or []
     children = person.get("children") or []
 
+    # Flag para evitar duplicar a frase de ausência total
+    added_unified_absence = False
+
     # Caso sem casamento e sem filhos (regra Shepard #6)
     if not spouses and not children:
-        parts.append("No records of marriage or children have been found to date.")
+        # Se também não há óbito registrado → frase unificada
+        if not _has_death_info(person):
+            parts.append("No records of marriage, children or death have been found to date.")
+            added_unified_absence = True
+        else:
+            parts.append("No records of marriage or children have been found to date.")
     else:
         # Para cada cônjuge: intro, casamento e cláusula de filhos
         total = len(spouses)
@@ -354,6 +389,10 @@ def build_biography(person: dict) -> str:
                     + ", ".join(all_names[:-1])
                     + f", and {all_names[-1]}."
                 )
+        else:
+            # Pessoa sem cônjuge e sem registro de óbito
+            if not _has_death_info(person) and not added_unified_absence:
+                parts.append("No records of death have been found to date.")
 
     # Lista Henry de filhos (tabulada), após a biografia
     children_block = _format_children_list(children)
@@ -367,6 +406,7 @@ def build_biography(person: dict) -> str:
         body = main_text
 
     return header + "\n\n" + body
+
 
 
 __all__ = ["build_biography"]

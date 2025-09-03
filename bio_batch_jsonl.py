@@ -112,6 +112,7 @@ def emit_bios(
 
     try:
         first_combined = True
+        first_stdout = True
         for person, ctx in people:
             if not isinstance(person, dict):
                 msg = f"{ctx}: entry is not a JSON object"
@@ -152,8 +153,10 @@ def emit_bios(
                 first_combined = False
 
             if to_stdout:
+                if not first_stdout:
+                    sys.stdout.write(SEPARATOR)
                 sys.stdout.write(bio)
-                sys.stdout.write(SEPARATOR)
+                first_stdout = False
     finally:
         if combined_handle:
             combined_handle.close()

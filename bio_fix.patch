@@ -1,0 +1,201 @@
+diff --git a/bio_writer.py b/bio_writer.py
+index 0d0c0d1..7c1a2b3 100644
+--- a/bio_writer.py
++++ b/bio_writer.py
+@@ -1,6 +1,7 @@
+ """Utilities to build brief genealogy biographies following a strict format.
+ 
+ Public API:
+     - build_biography(person: dict) -> str
++    - Suporta datas ISO parciais: YYYY, YYYY-MM, YYYY-MM-DD.
+ 
+ Notes
+ -----
+@@ -34,6 +35,36 @@ _MONTHS_EN = [
+     "July", "August", "September", "October", "November", "December",
+ ]
+ 
++# ---------------------------------------------------------------------------
++# Date parsing/formatting helpers (aceitam YYYY | YYYY-MM | YYYY-MM-DD)
++# ---------------------------------------------------------------------------
++
++def _parse_ymd(s: str | None) -> date | None:
++    """Mantida para compatibilidade com chamadas que exigem date completo."""
++    if not s:
++        return None
++    try:
++        y, m, d = map(int, s.split("-"))
++        return date(y, m, d)
++    except Exception:
++        return None
++
++def _parse_partial(s: str | None) -> tuple[int | None, int | None, int | None]:
++    """Retorna (year, month, day), aceitando YYYY, YYYY-MM, YYYY-MM-DD."""
++    if not s:
++        return (None, None, None)
++    parts = s.split("-")
++    try:
++        y = int(parts[0])
++        m = int(parts[1]) if len(parts) >= 2 else None
++        d = int(parts[2]) if len(parts) == 3 else None
++        return (y, m, d)
++    except Exception:
++        return (None, None, None)
++
++def _format_when_iso(s: str | None) -> str | None:
++    """Formata 'YYYY-MM-DD' → '9 March 1900'; 'YYYY-MM' → 'March 1900'; 'YYYY' → '1900'."""
++    y, m, d = _parse_partial(s)
++    if not y:
++        return None
++    if m and d:
++        try:
++            return f"{d} {_MONTHS_EN[m]} {y}"
++        except Exception:
++            return f"{y}"
++    if m:
++        return f"{_MONTHS_EN[m]} {y}"
++    return f"{y}"
++
+ # ---------------------------------------------------------------------------
+ # Helpers
+ # ---------------------------------------------------------------------------
+@@ -51,18 +82,10 @@ def _pronouns(sex: str | None) -> Dict[str, str]:
+     return {"subj": "They", "obj": "them", "poss": "their"}
+ 
+-
+-def _parse_ymd(s: str | None) -> date | None:
+-    if not s:
+-        return None
+-    try:
+-        y, m, d = map(int, s.split("-"))
+-        return date(y, m, d)
+-    except Exception:
+-        return None
+-
+-
+ def _format_date(d: date) -> str:
+     return f"{d.day} {_MONTHS_EN[d.month]} {d.year}"
+ 
++def _has_death_info(entry: dict | None) -> bool:
++    d = (entry or {}).get("death") or {}
++    return bool(d.get("date") or d.get("place"))
+ 
+ def _age_on(d_birth: date | None, d_event: date | None) -> int | None:
+     if not d_birth or not d_event:
+@@ -119,17 +142,17 @@ def _safe_name(x: dict | None, fallback: str = "Unknown") -> str:
+     return n.strip() if isinstance(n, str) and n.strip() else fallback
+ 
+ 
+ def _format_birth_parents(person: dict, P: Dict[str, str]) -> str:
+     birth = person.get("birth") or {}
+-    d_b = _parse_ymd(birth.get("date"))
+-    when = _format_date(d_b) if d_b else None
++    when = _format_when_iso(birth.get("date"))
+     place = birth.get("place")
+ 
+     sentence = f"{_safe_name(person)} was born"
+     if when and place:
+         sentence += f" on {when}, in {place}"
+     elif when:
+         sentence += f" on {when}"
+     elif place:
+         sentence += f" in {place}"
+     sentence += "."
+@@ -178,13 +201,13 @@ def _spouse_intro(spouse: dict, P: Dict[str, str], idx: int, total: int) -> str:
+     if total == 1:
+         head = f"{P['poss'].capitalize()} spouse was {_safe_name(spouse)}"
+     else:
+         head = f"{P['poss'].capitalize()} {_ordinal(idx)} spouse was {_safe_name(spouse)}"
+ 
+-    if when_b and place_b:
++    if when_b and place_b:
+         head += f", who was born on {when_b} in {place_b}."
+     elif when_b:
+         head += f", who was born on {when_b}."
+     elif place_b:
+         head += f", who was born in {place_b}."
+     else:
+         head += "."
+     return head
+ 
+ def _format_marriage(person: dict, spouse: dict, P: Dict[str, str], S: Dict[str, str]) -> str:
+@@ -194,12 +217,13 @@ def _format_marriage(person: dict, spouse: dict, P: Dict[str, str], S: Dict[str]) -> str:
+ 
+     m = marriage or {}
+-    d_m = _parse_ymd(m.get("date"))
++    d_m = _parse_ymd(m.get("date"))  # só calcula idade se for data completa
++    when = _format_when_iso(m.get("date")) or ""
+     d_pb = _parse_ymd((person.get("birth") or {}).get("date"))
+     d_sb = _parse_ymd((spouse.get("birth") or {}).get("date"))
+ 
+-    when = _format_date(d_m) if d_m else ""
+     place = m.get("place")
+ 
+     parts: List[str] = []
+     if when and place:
+         parts.append(f"They were married on {when} in {place}")
+@@ -234,16 +258,17 @@ def _death_sentence(person: dict, P: Dict[str, str]) -> Optional[str]:
+     birth = person.get("birth") or {}
+     b_place = birth.get("place")
+ 
+     death = person.get("death") or {}
+-    d_d = _parse_ymd(death.get("date"))
+-    when = _format_date(d_d) if d_d else None
++    d_d = _parse_ymd(death.get("date"))  # para cálculo de idade, se houver dia
++    when = _format_when_iso(death.get("date"))
+     d_place = death.get("place")
+ 
+     age = _age_on(_parse_ymd(birth.get("date")), d_d)
+ 
+-    if not when and not d_place:
++    if not when and not d_place:
+         return None
+ 
+     core = f"{_safe_name(person)} died"
+     if when and d_place:
+         core += f" on {when} in {d_place}"
+@@ -338,6 +363,18 @@ def build_biography(person: dict) -> str:
+ 
+     # Caso sem casamento e sem filhos (regra Shepard #6)
+     if not spouses and not children:
+-        parts.append("No records of marriage or children have been found to date.")
++        # Se também não há óbito registrado → frase unificada
++        if not _has_death_info(person):
++            parts.append("No records of marriage, children or death have been found to date.")
++        else:
++            parts.append("No records of marriage or children have been found to date.")
+     else:
+         # Para cada cônjuge: intro, casamento e cláusula de filhos
+         total = len(spouses)
+         for idx, sp in enumerate(spouses, start=1):
+             S = _pronouns((sp or {}).get("gender") or (sp or {}).get("sex"))
+             parts.append(_spouse_intro(sp or {}, P, idx, total))
+             m = _format_marriage(person, sp or {}, P, S)
+             if m:
+                 parts.append(m)
+             parts.append(_children_clause(sp or {}))
+@@ -356,12 +393,16 @@ def build_biography(person: dict) -> str:
+     # Ordena; None vai ao fim
+     death_entries.sort(key=lambda x: (x[0] is None, x[0] or date.max))
+ 
+     if death_entries:
+         parts.append(" ".join([t for _, t in death_entries]))
+     else:
+         # Regra #7: ausência de óbitos unificada
+-        if spouses:
++        if spouses:
+             all_names = [name] + [_safe_name(sp) for sp in spouses]
+             if len(all_names) == 2:
+                 parts.append(
+                     f"No records of death have been found to date for {all_names[0]} and {all_names[1]}."
+                 )
+             else:
+                 parts.append(
+                     "No records of death have been found to date for "
+                     + ", ".join(all_names[:-1])
+                     + f", and {all_names[-1]}."
+                 )
++        else:
++            # Pessoa sem cônjuge e sem registro de óbito (cobre casos não pegos acima)
++            if not _has_death_info(person):
++                parts.append("No records of death have been found to date.")
