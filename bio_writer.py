@@ -143,6 +143,10 @@ def _norm_place(s: str | None) -> str:
     """Normaliza lugares para comparação (casefold + trim)."""
     return (s or "").strip().casefold()
 
+def _indent_from_henry(hn: str) -> str:
+    """Número de tabs = quantidade de pontos no Henry (1 → 0 tabs; 1.1 → 1; 1.1.1 → 2...)."""
+    return "\t" * (hn.count("."))
+
 
 # ---------------------------------------------------------------------------
 # Configurações globais
@@ -153,19 +157,18 @@ AGE_ASSUME_DECEASED_YEARS = 100
 
 def _is_likely_deceased(person: dict) -> bool:
     """Retorna True se a pessoa tem óbito registrado OU se idade estimada >= limiar."""
-    # 1) Óbito explícito
     if _has_death_info(person):
         return True
 
-    # 2) Sem óbito: calcula idade atual
     d_b = _parse_ymd((person.get("birth") or {}).get("date"))
     if d_b:
         today = date.today()
-        age = _age_on(d_b, today)
+        age = _age_on_exact(d_b, today)
         if age is not None and age >= AGE_ASSUME_DECEASED_YEARS:
             return True
 
     return False
+
 
 def _children_intro(person: dict, P: Dict[str, str]) -> str:
     verb = "were" if _is_likely_deceased(person) else "are"
@@ -347,14 +350,15 @@ def _death_tuple(entry: dict | None) -> tuple[date | None, str]:
     return (d, sent or "")
 
 def _format_children_list(children: Iterable[dict]) -> str:
-    """Henry list: one per line, tab-indented: '<henry> <name>'."""
+    """Henry list: uma por linha, indentação por nível (tabs), formato '<henry> <nome>'."""
     lines = []
     for ch in (children or []):
         hn = (ch or {}).get("henry_number") or ""
         nm = _safe_name(ch, "")
         if hn and nm:
-            lines.append(f"\t{hn} {nm}")
+            lines.append(f"{_indent_from_henry(hn)}{hn} {nm}")
     return "\n".join(lines)
+
 
 # ---------------------------------------------------------------------------
 # Public API
@@ -369,7 +373,9 @@ def build_biography(person: dict) -> str:
     henry = person.get("henry_number") or ""
     P = _pronouns(person.get("gender") or person.get("sex"))
 
-    header = f"{henry} {name}".strip()
+    indent_level = henry.count(".")  # cada ponto = um nível
+    indent = "\t" * indent_level  # usa tabulação para deslocar
+    header = f"{indent}{henry} {name}"
 
     parts: List[str] = []
     parts.append(_format_birth_parents(person, P))
