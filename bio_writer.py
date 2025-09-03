@@ -92,7 +92,7 @@ def _has_death_info(entry: dict | None) -> bool:
     d = (entry or {}).get("death") or {}
     return bool(d.get("date") or d.get("place"))
 
-def _age_on(d_birth: date | None, d_event: date | None) -> int | None:
+def _age_on_exact(d_birth: date | None, d_event: date | None) -> int | None:
     if not d_birth or not d_event:
         return None
     years = d_event.year - d_birth.year
@@ -100,17 +100,49 @@ def _age_on(d_birth: date | None, d_event: date | None) -> int | None:
         years -= 1
     return years
 
+def _age_on_partial(birth_iso: str | None, event_iso: str | None) -> tuple[int | None, bool]:
+    """
+    Retorna (idade, approx) usando datas possivelmente parciais (YYYY | YYYY-MM | YYYY-MM-DD).
+    approx=True quando qualquer uma das datas for parcial (sem dia, ou sem mês).
+    """
+    by, bm, bd = _parse_partial(birth_iso)
+    ey, em, ed = _parse_partial(event_iso)
+    if not by or not ey:
+        return (None, False)
+
+    # Se ambas completas, delega ao cálculo exato.
+    db = _parse_ymd(birth_iso)
+    de = _parse_ymd(event_iso)
+    if db and de:
+        return (_age_on_exact(db, de), False)
+
+    # Cálculo aproximado (pelo menos um lado é parcial)
+    age = ey - by
+
+    # Se temos mês de ambos, podemos ajustar um pouco melhor:
+    if bm and em:
+        # Sem dias confiáveis → aproximação
+        # Se o evento ocorreu antes do mês de nascimento, diminui 1
+        if em < bm:
+            age -= 1
+        # Se mesmo mês mas sem dia/ordem clara, permanece como "about"
+    # Caso contrário, mantemos a diferença de anos simples
+
+    return (age, True)
+
 _ORDINALS = {
     1: "first", 2: "second", 3: "third", 4: "fourth", 5: "fifth",
     6: "sixth", 7: "seventh", 8: "eighth", 9: "ninth", 10: "tenth",
 }
 
 def _ordinal(n: int) -> str:
+    """Converte número em ordinal em inglês (1 -> first, etc.)."""
     return _ORDINALS.get(n, f"{n}th")
 
 def _norm_place(s: str | None) -> str:
     """Normaliza lugares para comparação (casefold + trim)."""
     return (s or "").strip().casefold()
+
 
 # ---------------------------------------------------------------------------
 # Configurações globais
@@ -237,22 +269,33 @@ def _format_marriage(person: dict, spouse: dict, P: Dict[str, str], S: Dict[str,
     elif place:
         parts.append(f"They were married in {place}")
 
-    a_p = _age_on(d_pb, d_m)
-    a_s = _age_on(d_sb, d_m)
+    a_p, approx_p = _age_on_partial((person.get("birth") or {}).get("date"), (marriage or {}).get("date"))
+    a_s, approx_s = _age_on_partial((spouse.get("birth") or {}).get("date"), (marriage or {}).get("date"))
+
     if a_p is not None and a_s is not None and parts:
-        parts[-1] += f"; {P['subj'].lower()} was {a_p} and {S['subj'].lower()} was {a_s}."
-    elif parts:
-        parts[-1] += "."
+        if a_p is not None and a_s is not None and parts:
+            about = " about" if (approx_p or approx_s) else ""
+            parts[-1] += f"; {P['subj'].lower()} was{about} {a_p} and {S['subj'].lower()} was{about} {a_s}."
+        elif parts:
+            parts[-1] += "."
 
     return " ".join(parts).strip()
 
-def _children_clause(spouse: dict) -> str:
+def _children_clause(person: dict, spouse: dict) -> str:
+    # filhos vinculados ao cônjuge
     kids = spouse.get("children") or []
     cnt = spouse.get("children_count") or spouse.get("children_estimate")
+
+    # se não houver filhos no cônjuge, usar os do nível principal da pessoa
+    if not kids and not cnt:
+        kids = person.get("children") or []
+        cnt = len(kids)
+
     n = cnt if isinstance(cnt, int) else (len(kids) if kids else 0)
     if n > 0:
         return f"Together they had at least {n} children."
     return "No records of children have been found to date."
+
 
 def _death_sentence(person: dict, P: Dict[str, str]) -> Optional[str]:
     birth = person.get("birth") or {}
@@ -263,7 +306,7 @@ def _death_sentence(person: dict, P: Dict[str, str]) -> Optional[str]:
     when = _format_when_iso(death.get("date"))
     d_place = death.get("place")
 
-    age = _age_on(_parse_ymd(birth.get("date")), d_d)
+    age, approx_age = _age_on_partial(birth.get("date"), (death or {}).get("date"))
 
     if not when and not d_place:
         return None
@@ -277,7 +320,7 @@ def _death_sentence(person: dict, P: Dict[str, str]) -> Optional[str]:
         core += f" in {d_place}"
 
     if age is not None:
-        core += f", at the age of {age}."
+        core += f", at the age of{' about' if approx_age else ''} {age}."
     else:
         core += "."
 
@@ -354,7 +397,7 @@ def build_biography(person: dict) -> str:
             m = _format_marriage(person, sp or {}, P, S)
             if m:
                 parts.append(m)
-            parts.append(_children_clause(sp or {}))
+            parts.append(_children_clause(person, sp or {}))
 
     # Óbitos (apenas no final), ordenados do mais antigo para o mais recente (regra #8)
     death_entries: List[tuple[date | None, str]] = []
