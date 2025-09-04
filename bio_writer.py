@@ -147,6 +147,166 @@ def _indent_from_henry(hn: str) -> str:
     """Número de tabs = quantidade de pontos no Henry (1 → 0 tabs; 1.1 → 1; 1.1.1 → 2...)."""
     return "\t" * (hn.count("."))
 
+def _collect_spouse_children_hn(sp: dict) -> set[str]:
+    vals = sp.get("children_henry_numbers")
+    if isinstance(vals, list):
+        return {str(x).strip() for x in vals if str(x).strip()}
+    return set()
+
+def _children_distribution(person: dict) -> dict:
+    """
+    Retorna um dict com:
+      - marriages_count: int
+      - total_children: int
+      - per_spouse: list de {index, spouse_name, count, source}
+      - outside_count: int | None (None = não declarado)
+    Prioridade: children_henry_numbers > children_count > spouse.children > (indeterminado)
+    """
+    spouses = person.get("spouses") or []
+    children = person.get("children") or []
+    total_children = len(children)
+
+    per = []
+    used_hn = set()  # evita duplo-contar se vierem listas por cônjuge
+    for idx, sp in enumerate(spouses, start=1):
+        name = (sp or {}).get("name") or f"Spouse {idx}"
+        hn_set = _collect_spouse_children_hn(sp or {})
+        if hn_set:
+            per.append({"index": idx, "spouse_name": name, "count": len(hn_set), "source": "declared_list"})
+            used_hn |= hn_set
+            continue
+
+        if isinstance(sp.get("children_count"), int):
+            per.append({"index": idx, "spouse_name": name, "count": sp["children_count"], "source": "declared_count"})
+            continue
+
+        if isinstance(sp.get("children"), list):
+            per.append({"index": idx, "spouse_name": name, "count": len(sp["children"]), "source": "spouse_children_list"})
+            continue
+
+        per.append({"index": idx, "spouse_name": name, "count": 0, "source": "unknown"})
+
+    # Fora do casamento (apenas se declarado)
+    outside_decl = person.get("outside_children_henry_numbers")
+    if isinstance(outside_decl, list) and outside_decl:
+        outside_count = len({str(x).strip() for x in outside_decl if str(x).strip()})
+    else:
+        outside_count = None  # não afirmar sem registro explícito
+
+    return {
+        "marriages_count": len(spouses),
+        "total_children": total_children,
+        "per_spouse": per,
+        "outside_count": outside_count,
+    }
+
+def _format_qna_pt(person: dict, dist: dict) -> str:
+    """
+    Gera bloco-resumo em PT, seguindo seu roteiro:
+    - Quantos casamentos teve?
+    - Teve filhos?
+    - Foi fora do casamento?
+    - Qual? (distribuição por casamento)
+    - Quantos por casamento e fora do casamento (se declarado)
+    """
+    indent_base = "\t" * ((person.get("henry_number") or "").count(".") + 1)
+
+    marriages = dist["marriages_count"]
+    total_children = dist["total_children"]
+    per = dist["per_spouse"]
+    outside = dist["outside_count"]  # None = não declarado
+
+    lines = []
+    lines.append(f"{indent_base}Quantos casamentos teve? {'Nenhum' if marriages == 0 else marriages}")
+    lines.append(f"{indent_base}Teve filhos? {'Sim' if total_children > 0 else 'Não (sem registros de filhos encontrados)'}")
+
+    # Fora do casamento
+    if outside is None:
+        # Sem registro explícito, evitar afirmação
+        lines.append(f"{indent_base}Foi fora do casamento? Não há registros que indiquem filhos fora do casamento.")
+    else:
+        lines.append(f"{indent_base}Foi fora do casamento? {'Sim' if outside > 0 else 'Não'}")
+
+    # Distribuição por casamento
+    if marriages > 0:
+        lines.append(f"{indent_base}Distribuição por casamento:")
+        for item in per:
+            idx = item["index"]
+            cnt = item["count"]
+            lines.append(f"{indent_base}- {idx}º casamento: {cnt}")
+        if outside is not None:
+            lines.append(f"{indent_base}- Fora do casamento: {outside}")
+
+    return "\n".join(lines)
+
+
+import re
+
+def _last_token(s: str | None) -> str:
+    if not isinstance(s, str):
+        return ""
+    parts = [p for p in s.strip().split() if p and p.strip("—-")]
+    return (parts[-1] if parts else "").strip(",. ").casefold()
+
+def _soundex_key(token: str) -> str:
+    """Soundex simples (suficiente p/ Muncey/Muncy/Muncie/Munsey)."""
+    if not token:
+        return ""
+    t = re.sub(r'[^A-Za-z]', '', token).upper()
+    if not t:
+        return ""
+    # 1) primeira letra
+    first = t[0]
+    # 2) mapa
+    table = str.maketrans({
+        **{c:"1" for c in "BFPV"},
+        **{c:"2" for c in "CGJKQSXZ"},
+        **{c:"3" for c in "DT"},
+        **{c:"4" for c in "L"},
+        **{c:"5" for c in "MN"},
+        **{c:"6" for c in "R"},
+    })
+    # 3) codificar resto
+    coded = t[1:].translate(table)
+    # 4) remover vogais/Y/H/W (viram 0 na prática)
+    coded = re.sub(r'[AEIOUYHW]', '0', coded)
+    # 5) colapsar duplicados
+    coded = re.sub(r'(\d)\1+', r'\1', coded)
+    # 6) remover zeros
+    coded = coded.replace('0', '')
+    # 7) montar/padding
+    key = (first + coded + "000")[:4]
+    return key
+
+def _surname_key(s: str | None) -> str:
+    return _soundex_key(_last_token(s))
+
+def _infer_children_for_spouse(person: dict, spouse: dict) -> int:
+    # 1) Dado explícito sempre vence
+    if isinstance(spouse.get("children_count"), int):
+        return spouse["children_count"]
+
+    ch_nums = spouse.get("children_henry_numbers")
+    if isinstance(ch_nums, list) and ch_nums:
+        return len(ch_nums)
+
+    # 2) Se o cônjuge carregou uma lista própria de filhos, usa
+    if isinstance(spouse.get("children"), list) and spouse["children"]:
+        return len(spouse["children"])
+
+    # 3) Fallback: inferência fonética por sobrenome (já implementada)
+    key_sp = _surname_key(spouse.get("name"))
+    if not key_sp:
+        return 0
+    cnt = 0
+    for ch in (person.get("children") or []):
+        nm = (ch or {}).get("name") or ""
+        if nm and _surname_key(nm) == key_sp:
+            cnt += 1
+    return cnt
+
+
+
 import re
 
 def _last_token(s: str | None) -> str:
@@ -189,6 +349,9 @@ def _infer_children_for_spouse(person: dict, spouse: dict) -> int:
 
 # Considera "falecido" se idade estimada >= este valor e não houver óbito registrado
 AGE_ASSUME_DECEASED_YEARS = 100
+
+# Mostrar bloco-resumo Q&A (português) ao final da biografia
+ENABLE_QNA_SUMMARY_PT = False
 
 def _is_likely_deceased(person: dict) -> bool:
     """Retorna True se a pessoa tem óbito registrado OU se idade estimada >= limiar."""
@@ -292,45 +455,39 @@ def _format_marriage(person: dict, spouse: dict, P: Dict[str, str], S: Dict[str,
         return ""
 
     m = marriage or {}
-    d_m = _parse_ymd(m.get("date"))  # só calcula idade se for data completa
     when = _format_when_iso(m.get("date")) or ""
-    d_pb = _parse_ymd((person.get("birth") or {}).get("date"))
-    d_sb = _parse_ymd((spouse.get("birth") or {}).get("date"))
+    place = (m.get("place") or "").strip()
 
-    place = m.get("place")
-
-    parts: List[str] = []
+    # frase-base
     if when and place:
-        parts.append(f"They were married on {when} in {place}")
+        sentence = f"They were married on {when} in {place}"
     elif when:
-        parts.append(f"They were married on {when}")
+        sentence = f"They were married on {when}"
     elif place:
-        parts.append(f"They were married in {place}")
+        sentence = f"They were married in {place}"
+    else:
+        return ""
 
+    # idades (exatas ou "about")
     a_p, approx_p = _age_on_partial((person.get("birth") or {}).get("date"), (marriage or {}).get("date"))
     a_s, approx_s = _age_on_partial((spouse.get("birth") or {}).get("date"), (marriage or {}).get("date"))
+    if a_p is not None and a_s is not None:
+        about = " about" if (approx_p or approx_s) else ""
+        sentence += f"; {P['subj'].lower()} was{about} {a_p} and {S['subj'].lower()} was{about} {a_s}"
 
-    if a_p is not None and a_s is not None and parts:
-        if a_p is not None and a_s is not None and parts:
-            about = " about" if (approx_p or approx_s) else ""
-            parts[-1] += f"; {P['subj'].lower()} was{about} {a_p} and {S['subj'].lower()} was{about} {a_s}."
-        elif parts:
-            parts[-1] += "."
+    # ponto final garantido
+    if not sentence.endswith("."):
+        sentence += "."
 
-    return " ".join(parts).strip()
+    return sentence
+
 
 def _children_clause(person: dict, spouse: dict) -> str:
-    # Preferência por dados do cônjuge; se ausentes, usa heurística de sobrenome.
     n = _infer_children_for_spouse(person, spouse)
-
     if n > 0:
-        return f"From this marriage, they had at least {n} children."
-    else:
-        person_children = person.get("children") or []
-        if person_children:
-            return "From this marriage, no specific records link children to this union."
-        return "No records of children have been found to date."
-
+        word = "child" if n == 1 else "children"
+        return f"From this marriage, they had at least {n} {word}."
+    return ""
 
 
 def _death_sentence(person: dict, P: Dict[str, str]) -> Optional[str]:
@@ -381,6 +538,19 @@ def _death_tuple(entry: dict | None) -> tuple[date | None, str]:
     sent = _death_sentence(entry, P)
     d = _parse_ymd(((entry.get("death") or {}).get("date")))
     return (d, sent or "")
+
+def _is_100_plus_without_death(entry: dict | None) -> bool:
+    if not isinstance(entry, dict):
+        return False
+    if _has_death_info(entry):
+        return False
+    birth_iso = (entry.get("birth") or {}).get("date")
+    y, m, d = _parse_partial(birth_iso)
+    if not y:
+        return False
+    today = date.today()
+    return (today.year - y) >= AGE_ASSUME_DECEASED_YEARS
+
 
 def _format_children_list(children: Iterable[dict]) -> str:
     """Henry list: uma por linha, indentação por nível (tabs), formato '<henry> <nome>'."""
@@ -458,23 +628,27 @@ def build_biography(person: dict) -> str:
     if death_entries:
         parts.append(" ".join([t for _, t in death_entries]))
     else:
-        # Regra #7: ausência de óbitos unificada
+        # Regra #7: ausência de óbitos unificada (+ 'as of <today>' quando >=100 anos)
+        today_str = _format_date(date.today())
         if spouses:
             all_names = [name] + [_safe_name(sp) for sp in spouses]
+            needs_asof = _is_100_plus_without_death(person) or any(
+                _is_100_plus_without_death(sp or {}) for sp in spouses)
+            tail = f" as of {today_str}." if needs_asof else "."
             if len(all_names) == 2:
-                parts.append(
-                    f"No records of death have been found to date for {all_names[0]} and {all_names[1]}."
-                )
+                parts.append(f"No records of death have been found to date for {all_names[0]} and {all_names[1]}{tail}")
             else:
                 parts.append(
                     "No records of death have been found to date for "
                     + ", ".join(all_names[:-1])
-                    + f", and {all_names[-1]}."
+                    + f", and {all_names[-1]}{tail}"
                 )
         else:
-            # Pessoa sem cônjuge e sem registro de óbito
             if not _has_death_info(person) and not added_unified_absence:
-                parts.append("No records of death have been found to date.")
+                if _is_100_plus_without_death(person):
+                    parts.append(f"No records of death have been found to date as of {today_str}.")
+                else:
+                    parts.append("No records of death have been found to date.")
 
     # Lista Henry de filhos (tabulada), após a biografia
     children_block = _format_children_list(children)
@@ -483,12 +657,24 @@ def build_biography(person: dict) -> str:
     main_text = " ".join(s.strip() for s in parts if s and s.strip())
 
     if children_block:
-        body = f"{main_text}\n\n\tTheir children were:\n\n{children_block}"
+        # se houver filhos, use a identação do primeiro filho
+        first_child = (children or [None])[0] or {}
+        label_indent = _indent_from_henry(first_child.get("henry_number") or "")
+        if not label_indent:
+            # fallback: um nível abaixo do próprio henry da pessoa
+            label_indent = "\t" * (henry.count(".") + 1)
+        body = f"{main_text}\n\n{label_indent}Their children were:\n\n{children_block}"
     else:
         body = main_text
 
-    return header + "\n\n" + body
+    # Bloco Q&A em PT (opcional)
+    if ENABLE_QNA_SUMMARY_PT:
+        dist = _children_distribution(person)
+        qna = _format_qna_pt(person, dist)
+        if qna.strip():
+            body = f"{body}\n\n{qna}"
 
+    return header + "\n\n" + body
 
 
 __all__ = ["build_biography"]
