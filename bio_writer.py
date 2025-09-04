@@ -147,6 +147,41 @@ def _indent_from_henry(hn: str) -> str:
     """Número de tabs = quantidade de pontos no Henry (1 → 0 tabs; 1.1 → 1; 1.1.1 → 2...)."""
     return "\t" * (hn.count("."))
 
+import re
+
+def _last_token(s: str | None) -> str:
+    """Última palavra (sobrenome) em 'Nome Sobrenome'."""
+    if not isinstance(s, str):
+        return ""
+    parts = [p for p in s.strip().split() if p and p.strip("—-")]
+    return (parts[-1] if parts else "").strip(",. ")
+
+def _infer_children_for_spouse(person: dict, spouse: dict) -> int:
+    """
+    Retorna quantos filhos foram desse casamento.
+    Prioridade:
+      1) spouse['children_count'] (ou 'children')
+      2) Heurística de sobrenome (Kennedy, Cook, etc.) nos filhos de `person`.
+    """
+    # 1) Preferência por contagem explícita no cônjuge
+    if isinstance(spouse.get("children_count"), int):
+        return spouse["children_count"]
+    if isinstance(spouse.get("children"), list) and spouse["children"]:
+        return len(spouse["children"])
+
+    # 2) Heurística por sobrenome
+    spouse_surname = _last_token(spouse.get("name"))
+    if not spouse_surname:
+        return 0
+
+    cnt = 0
+    for ch in (person.get("children") or []):
+        nm = (ch or {}).get("name") or ""
+        child_surname = _last_token(nm)
+        if child_surname and spouse_surname.lower() == child_surname.lower():
+            cnt += 1
+    return cnt
+
 
 # ---------------------------------------------------------------------------
 # Configurações globais
@@ -285,19 +320,17 @@ def _format_marriage(person: dict, spouse: dict, P: Dict[str, str], S: Dict[str,
     return " ".join(parts).strip()
 
 def _children_clause(person: dict, spouse: dict) -> str:
-    # filhos vinculados ao cônjuge
-    kids = spouse.get("children") or []
-    cnt = spouse.get("children_count") or spouse.get("children_estimate")
+    # Preferência por dados do cônjuge; se ausentes, usa heurística de sobrenome.
+    n = _infer_children_for_spouse(person, spouse)
 
-    # se não houver filhos no cônjuge, usar os do nível principal da pessoa
-    if not kids and not cnt:
-        kids = person.get("children") or []
-        cnt = len(kids)
-
-    n = cnt if isinstance(cnt, int) else (len(kids) if kids else 0)
     if n > 0:
-        return f"Together they had at least {n} children."
-    return "No records of children have been found to date."
+        return f"From this marriage, they had at least {n} children."
+    else:
+        person_children = person.get("children") or []
+        if person_children:
+            return "From this marriage, no specific records link children to this union."
+        return "No records of children have been found to date."
+
 
 
 def _death_sentence(person: dict, P: Dict[str, str]) -> Optional[str]:
