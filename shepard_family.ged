@@ -1,0 +1,1415 @@
+﻿0 HEAD
+1 SOUR RootsMagic
+2 NAME RootsMagic
+2 CORP RootsMagic, Inc.
+3 ADDR PO Box 495
+4 CONT Springville, UT 84663
+4 CONT USA
+3 PHON 1-800-ROOTSMAGIC
+3 WWW www.RootsMagic.com
+1 DEST RootsMagic
+1 DATE 5 SEP 2025
+1 FILE shepard_family.ged
+1 GEDC
+2 VERS 5.5.1
+2 FORM LINEAGE-LINKED
+1 CHAR UTF-8
+0 @I1@ INDI
+1 NAME Wayne Lee /Elsey/
+2 GIVN Wayne Lee
+2 SURN Elsey
+1 SEX M
+1 _UID 568D5D9741F14367919667D7F05B80EED106
+1 _FSFTID P9KN-6Z6
+1 CHAN
+2 DATE 5 SEP 2025
+1 BIRT
+2 DATE 10 FEB 1965
+2 PLAC Arlington, Virgínia, Estados Unidos da América
+1 FAMS @F2@
+1 FAMS @F3@
+1 FAMC @F1@
+0 @I2@ INDI
+1 NAME Courtney /Eaton/
+2 GIVN Courtney
+2 SURN Eaton
+1 SEX F
+1 _UID 8C177C03619749C094CE42AF1549DFC87B99
+1 _FSFTID P9GJ-BCB
+1 CHAN
+2 DATE 5 SEP 2025
+1 BIRT
+2 DATE 1972
+1 FAMS @F3@
+0 @I3@ INDI
+1 NAME Diane /Leckey/
+2 GIVN Diane
+2 SURN Leckey
+1 SEX F
+1 _UID 80C21CD61FBA4D58ACE6A40A9CA3F4EC1131
+1 _FSFTID P923-1CB
+1 CHAN
+2 DATE 5 SEP 2025
+1 BIRT
+2 DATE 1965
+1 DEAT
+2 DATE 2017
+2 PLAC Virgínia, Estados Unidos da América
+1 FAMS @F2@
+0 @I4@ INDI
+1 NAME Melissa /Elsey/
+2 GIVN Melissa
+2 SURN Elsey
+1 SEX F
+1 _UID CCA4C211BAEF43689C9C7EEF018C921C77C3
+1 _FSFTID P9G9-RCZ
+1 CHAN
+2 DATE 5 SEP 2025
+1 BIRT
+2 DATE 13 JUL 1989
+2 PLAC Virgínia, Estados Unidos da América
+1 FAMS @F4@
+1 FAMC @F2@
+0 @I5@ INDI
+1 NAME Aiden Ryan /Pitts/
+2 GIVN Aiden Ryan
+2 SURN Pitts
+1 SEX M
+1 _UID 425A223D491E4FA6972F05B28517EC7DD944
+1 _FSFTID P9G9-RTL
+1 CHAN
+2 DATE 5 SEP 2025
+1 FAMC @F4@
+0 @I6@ INDI
+1 NAME Jaxon Lee /Pitts/
+2 GIVN Jaxon Lee
+2 SURN Pitts
+1 SEX M
+1 _UID 1F1E09B5A611459889988A950276705E152B
+1 _FSFTID P9G9-RT1
+1 CHAN
+2 DATE 5 SEP 2025
+1 FAMC @F4@
+0 @I7@ INDI
+1 NAME Aubree /Pitts/
+2 GIVN Aubree
+2 SURN Pitts
+1 SEX F
+1 _UID 43175DB1A2BC4EE6B17CD14937EBC8BCE792
+1 _FSFTID P9G9-GKS
+1 CHAN
+2 DATE 5 SEP 2025
+1 BIRT
+2 DATE 13 AUG 2013
+2 PLAC Spotsylvania, Virgínia, Estados Unidos da América
+1 FAMC @F4@
+0 @I8@ INDI
+1 NAME Joshua Ryan /Pitts/
+2 GIVN Joshua Ryan
+2 SURN Pitts
+1 SEX M
+1 _UID 438872D1CEE44B05B5765CE96EA853553ED2
+1 _FSFTID P9G9-2DB
+1 CHAN
+2 DATE 5 SEP 2025
+1 FAMS @F4@
+0 @I9@ INDI
+1 NAME Virginia Irene /Shepherd/
+2 GIVN Virginia Irene
+2 SURN Shepherd
+1 SEX F
+1 _UID DEC9C0AE79194731B4984750175BB0C6EAD0
+1 _FSFTID GGS6-V7F
+1 CHAN
+2 DATE 5 SEP 2025
+1 BIRT
+2 DATE 23 DEC 1939
+2 PLAC Tazewell, Virgínia, Estados Unidos da América
+1 DEAT
+2 DATE 20 SEP 2020
+2 PLAC Orlando, Orange, Flórida, Estados Unidos da América
+1 BURI
+2 PLAC Fourmile Fork, Spotsylvania, Virgínia, Estados Unidos da América
+1 FAMS @F1@
+1 FAMS @F6@
+1 FAMC @F5@
+0 @I10@ INDI
+1 NAME  /Neil/
+2 NPFX Mr
+2 SURN Neil
+1 SEX M
+1 _UID 5EC3B080886D4F22B60EB228D6450438AC31
+1 _FSFTID P92W-XSL
+1 CHAN
+2 DATE 5 SEP 2025
+1 DEAT
+1 FAMS @F6@
+0 @I11@ INDI
+1 NAME Mathias Forman /Elsey/
+2 GIVN Mathias Forman
+2 SURN Elsey
+1 SEX M
+1 _UID 53CD8FE8C55540B19C0010DD10BC003229A0
+1 _FSFTID G7P1-6WS
+1 CHAN
+2 DATE 5 SEP 2025
+1 BIRT
+2 DATE 31 MAY 1936
+2 PLAC Morgantown, Monongalia, West Virginia, United States
+1 DEAT
+2 DATE 3 MAR 2015
+1 BURI
+2 PLAC Four Mile Fork, Spotsylvania, Virginia, United States of America
+1 FAMS @F1@
+1 FAMS @F8@
+1 FAMC @F7@
+0 @I12@ INDI
+1 NAME Dorothy Elizabeth /Cady/
+2 GIVN Dorothy Elizabeth
+2 SURN Cady
+1 SEX F
+1 _UID BAD03660132C4FE8B4C6D5310F346432EF79
+1 _FSFTID G7P1-VVR
+1 CHAN
+2 DATE 5 SEP 2025
+1 BIRT
+2 DATE 1936
+2 PLAC Scottsville, Monroe, Nova Iorque, Estados Unidos da América
+1 DEAT
+1 FAMS @F8@
+0 @I13@ INDI
+1 NAME Mathias Forman /Elsey/
+2 GIVN Mathias Forman
+2 SURN Elsey
+1 SEX M
+1 _UID 8E372112C7274E9A89F9AB2C135B79D1DF5D
+1 _FSFTID GPC5-1NB
+1 CHAN
+2 DATE 5 SEP 2025
+1 BIRT
+2 DATE 22 MAY 1909
+2 PLAC Terra Alta, Preston, Virgínia Ocidental, Estados Unidos da América
+1 BURI
+2 DATE 1948
+2 PLAC Bladensburg, Prince George's, Marilândia, Estados Unidos da América
+1 DEAT
+2 DATE 21 DEC 1948
+2 PLAC Prince George, Virgínia, Estados Unidos da América
+1 FAMS @F7@
+0 @I14@ INDI
+1 NAME Bertha Hazel /Brown/
+2 GIVN Bertha Hazel
+2 SURN Brown
+1 SEX F
+1 _UID DEA3DCA65E544064BC7382DFCBFE1A3602E7
+1 _FSFTID GGW3-TQY
+1 CHAN
+2 DATE 5 SEP 2025
+1 BIRT
+2 DATE 21 FEB 1919
+2 PLAC Tazewell, Virginia, United States
+1 BURI
+2 DATE SEP 1998
+2 PLAC Pleasant Hill Cemetery, Thompson Valley, Tazewell, Virginia, United States
+1 DEAT
+2 DATE 13 SEP 1998
+2 PLAC Tazewell, Virginia, United States
+1 FAMS @F5@
+0 @I15@ INDI
+1 NAME Virginia Eudora /Dixon/
+2 GIVN Virginia Eudora
+2 SURN Dixon
+1 SEX F
+1 _UID 89DE92C6B4424A3DBC3BCF263B1E90A2B308
+1 _FSFTID GVLS-JFV
+1 CHAN
+2 DATE 5 SEP 2025
+1 BIRT
+2 DATE 13 OCT 1915
+2 PLAC District of Columbia, United States
+1 DEAT
+2 DATE 23 AUG 1999
+2 PLAC West Falls Church, Fairfax County, Virgínia, Estados Unidos da América
+1 BURI
+2 PLAC West Falls Church, Fairfax, Virginia, United States of America
+1 FAMS @F7@
+0 @I16@ INDI
+1 NAME George Edd /Shepard/
+2 GIVN George Edd
+2 SURN Shepard
+1 SEX M
+1 _UID A3C188CCBAE947689BE2BD2C123B69E90F78
+1 _FSFTID GMBP-M2N
+1 CHAN
+2 DATE 5 SEP 2025
+1 BIRT
+2 DATE 2 APR 1916
+2 PLAC Asbery, Tazwell, Virginia, United States
+1 DEAT
+2 DATE 11 JUN 2000
+2 PLAC Tazewell, Virginia, United States
+1 BURI
+2 PLAC Thompson Valley, Tazewell, Virginia, United States of America
+1 FAMS @F5@
+0 @I17@ INDI
+1 NAME  /Sheppard/
+2 SURN Sheppard
+1 SEX M
+1 _UID 956AEBADD5EA46A1B7F9A73F34C1CD11A602
+1 _FSFTID GGW3-RQM
+1 CHAN
+2 DATE 5 SEP 2025
+1 BIRT
+2 DATE 7 FEB 1950
+2 PLAC Tazewell, Virginia, United States
+1 DEAT
+2 DATE 8 FEB 1950
+2 PLAC Tazewell, Tazewell, Virginia, United States
+1 FAMC @F5@
+0 @I18@ INDI
+1 NAME Maxine V. /Elsey/
+2 GIVN Maxine V.
+2 SURN Elsey
+1 SEX F
+1 _UID EF3B58A9E0A345CEA71D5B036BF3B87F78E3
+1 _FSFTID P9LW-NQ4
+1 CHAN
+2 DATE 5 SEP 2025
+1 BIRT
+2 DATE 1940
+2 PLAC Virgínia Ocidental, Estados Unidos da América
+1 DEAT
+1 FAMS @F9@
+1 FAMS @F10@
+1 FAMC @F7@
+0 @I19@ INDI
+1 NAME Deborah Sue /Shepard/
+2 GIVN Deborah Sue
+2 SURN Shepard
+1 SEX F
+1 _UID 0CAE344F58154E0BB1085BE6381E8A6E4B5F
+1 _FSFTID P92Q-ZKN
+1 CHAN
+2 DATE 5 SEP 2025
+1 BIRT
+2 DATE 23 AUG 1963
+2 PLAC 23 Ago 1963 Manassas, City of Manassas, Virginia, USA
+1 DEAT
+2 DATE 15 APR 2020
+2 PLAC Oakwood, Buchanan, Virgínia, Estados Unidos da América
+1 BURI
+2 PLAC Pleasant Hill Cemetery, Thompson Valley, Tazewell, Virgínia, Estados Unidos da América
+1 FAMC @F5@
+0 @I20@ INDI
+1 NAME Jimmy Alexander /Shepard/
+2 GIVN Jimmy Alexander
+2 SURN Shepard
+1 SEX M
+1 _UID 5C4C10D6872043DEA474F23B8643B3A8BF20
+1 _FSFTID P92Q-987
+1 CHAN
+2 DATE 5 SEP 2025
+1 BIRT
+2 DATE 23 FEB 1942
+2 PLAC Tazewell, Tazewell, Virgínia, Estados Unidos da América
+1 DEAT
+2 DATE 12 MAY 2023
+1 BURI
+2 PLAC King George, King George, Virgínia, Estados Unidos da América
+1 FAMS @F11@
+1 FAMC @F5@
+0 @I21@ INDI
+1 NAME George Arthur /Shepard/
+2 GIVN George Arthur
+2 SURN Shepard
+2 NSFX Jr.
+1 SEX M
+1 _UID EA9A787739974BBCBA647D001ABFE9B55C9A
+1 _FSFTID P92Q-9XS
+1 CHAN
+2 DATE 5 SEP 2025
+1 BIRT
+2 DATE 1949
+2 PLAC Tazewell, Virgínia, Estados Unidos da América
+1 DEAT
+1 FAMS @F13@
+1 FAMC @F5@
+0 @I22@ INDI
+1 NAME Elizabeth Ann /Shepard/
+2 GIVN Elizabeth Ann
+2 SURN Shepard
+1 SEX F
+1 _UID A5E832B77E0645B3942C16C98696DDA63095
+1 _FSFTID GGW3-Z85
+1 CHAN
+2 DATE 5 SEP 2025
+1 BIRT
+2 DATE 4 JUL 1951
+2 PLAC Tazewell, Tazewell, Virginia, United States
+1 DEAT
+2 DATE 27 JUL 2000
+1 FAMS @F12@
+1 FAMC @F5@
+0 @I23@ INDI
+1 NAME Larry /Shepard/
+2 GIVN Larry
+2 SURN Shepard
+1 SEX M
+1 _UID 501EA627D0AD40A5A31D472C3521A214DC45
+1 _FSFTID P92Q-CF5
+1 CHAN
+2 DATE 5 SEP 2025
+1 FAMS @F14@
+1 FAMS @F15@
+1 FAMC @F5@
+0 @I24@ INDI
+1 NAME Hazel Ann /Elsey/
+2 GIVN Hazel Ann
+2 SURN Elsey
+1 SEX F
+1 _UID 40BDB3885A69453884E28233AD2351EEA230
+1 _FSFTID P9LC-75F
+1 CHAN
+2 DATE 5 SEP 2025
+1 BIRT
+2 DATE 19 JUN 1946
+2 PLAC Prince George, Virgínia, Estados Unidos da América
+1 DEAT
+1 FAMS @F16@
+1 FAMS @F17@
+1 FAMC @F7@
+0 @I25@ INDI
+1 NAME Frances /Shepard/
+2 GIVN Frances
+2 SURN Shepard
+1 SEX F
+1 _UID 6D2A7BC93B6A4B7E9538977BD849A76555F2
+1 _FSFTID P92Q-Q99
+1 CHAN
+2 DATE 5 SEP 2025
+1 BIRT
+2 DATE 1945
+2 PLAC Virgínia, Estados Unidos da América
+1 DEAT
+1 FAMS @F18@
+1 FAMS @F19@
+1 FAMC @F5@
+0 @I26@ INDI
+1 NAME Edward /Justice/
+2 GIVN Edward
+2 SURN Justice
+1 SEX M
+1 _UID CBAF1D02203D4CBDB6B50F7EB1A88D5734FD
+1 _FSFTID P9LW-MW8
+1 CHAN
+2 DATE 5 SEP 2025
+1 FAMS @F10@
+0 @I27@ INDI
+1 NAME Thomas /Rees/
+2 GIVN Thomas
+2 SURN Rees
+1 SEX M
+1 _UID 6914F70438874E90B54839FED09A848AC187
+1 _FSFTID P9L7-XBM
+1 CHAN
+2 DATE 5 SEP 2025
+1 DEAT
+1 FAMS @F9@
+0 @I28@ INDI
+1 NAME Sarah Alice /Shelton/
+2 GIVN Sarah Alice
+2 SURN Shelton
+1 SEX F
+1 _UID 41398F10B4274529BBC4634F58122416374E
+1 _FSFTID P9L4-8RF
+1 CHAN
+2 DATE 5 SEP 2025
+1 BIRT
+2 DATE 21 JUL 1951
+2 PLAC Marilândia, Estados Unidos da América
+1 FAMS @F11@
+0 @I29@ INDI
+1 NAME Brenda Carol /Gochenour/
+2 GIVN Brenda Carol
+2 SURN Gochenour
+1 SEX F
+1 _UID 4643B4F16B6347DD832BBA5C8674A273F3CA
+1 _FSFTID P9L4-WXN
+1 CHAN
+2 DATE 5 SEP 2025
+1 BIRT
+2 DATE 1951
+2 PLAC Page, Virgínia, Estados Unidos da América
+1 FAMS @F13@
+0 @I30@ INDI
+1 NAME John Garret /Elsey/
+2 GIVN John Garret
+2 SURN Elsey
+1 SEX M
+1 _UID BBAF4E5DB881430DB1012E53C34C833A9D9E
+1 _FSFTID GPCB-ZV6
+1 CHAN
+2 DATE 5 SEP 2025
+1 BIRT
+2 DATE 7 JAN 1938
+2 PLAC West Virginia, United States
+1 DEAT
+2 DATE 18 FEB 1987
+2 PLAC Woodbridge, Prince William, Virginia, United States
+1 BURI
+2 PLAC , Fairfax, Virginia, United States of America
+1 FAMS @F20@
+1 FAMS @F21@
+1 FAMS @F22@
+1 FAMC @F7@
+0 @I31@ INDI
+1 NAME Frank /Remines/
+2 GIVN Frank
+2 SURN Remines
+1 SEX M
+1 _UID 277DDE4B054A48679F2842BDEB55E304B851
+1 _FSFTID P9GS-S4B
+1 CHAN
+2 DATE 5 SEP 2025
+1 DEAT
+1 FAMS @F12@
+0 @I32@ INDI
+1 NAME Ann /Shepard/
+2 GIVN Ann
+2 SURN Shepard
+1 SEX F
+1 _UID 4E0E473E0D754446BFFBFAD2FE20AFFE3EFA
+1 _FSFTID P3XN-MFS
+1 CHAN
+2 DATE 5 SEP 2025
+1 DEAT
+1 FAMS @F15@
+0 @I33@ INDI
+1 NAME Carolyn /Thompson/
+2 GIVN Carolyn
+2 SURN Thompson
+1 SEX F
+1 _UID 16EA8825644347AC899AEB22A424CE626F6E
+1 _FSFTID PQT1-YKQ
+1 CHAN
+2 DATE 5 SEP 2025
+1 DEAT
+1 FAMS @F14@
+0 @I34@ INDI
+1 NAME Daniel /Cassell/
+2 GIVN Daniel
+2 SURN Cassell
+1 SEX M
+1 _UID FA0ED1F5435047259ADD9200625B9120441A
+1 _FSFTID P9L4-49H
+1 CHAN
+2 DATE 5 SEP 2025
+1 BIRT
+2 DATE 1947
+2 PLAC Danville, Virgínia, Estados Unidos da América
+1 FAMS @F18@
+0 @I35@ INDI
+1 NAME Mr /Hollingsworth/
+2 GIVN Mr
+2 SURN Hollingsworth
+1 SEX M
+1 _UID 06A0D779F4064EA68C09B2B62C331FAB0AC6
+1 _FSFTID P366-1H5
+1 CHAN
+2 DATE 5 SEP 2025
+1 DEAT
+1 FAMS @F19@
+0 @I36@ INDI
+1 NAME John Robert /Testerman/
+2 GIVN John Robert
+2 SURN Testerman
+1 SEX M
+1 _UID 139C6C16D6064D1D9317AD7D9C9850A271DD
+1 _FSFTID P9LC-7H8
+1 CHAN
+2 DATE 5 SEP 2025
+1 BIRT
+2 DATE 1942
+2 PLAC Fairfax, Virgínia, Estados Unidos da América
+1 DEAT
+1 FAMS @F17@
+0 @I37@ INDI
+1 NAME Carol /Elsey/
+2 GIVN Carol
+2 SURN Elsey
+1 SEX F
+1 _UID 06B62766CCA34E418AE4CB4458EEBE6129E9
+1 _FSFTID P9Y2-KPX
+1 CHAN
+2 DATE 5 SEP 2025
+1 DEAT
+1 FAMS @F21@
+0 @I38@ INDI
+1 NAME Frances /C./
+2 GIVN Frances
+2 SURN C.
+1 SEX F
+1 _UID C8ED122B323B418EACFFA628B4AFDECBB360
+1 _FSFTID P9GS-ZJV
+1 CHAN
+2 DATE 5 SEP 2025
+1 DEAT
+1 FAMS @F22@
+0 @I39@ INDI
+1 NAME Floyd Henry /Frye/
+2 GIVN Floyd Henry
+2 SURN Frye
+1 SEX M
+1 _UID CF445998A6C14B19809B484234F444BA9A89
+1 _FSFTID P9LH-B78
+1 CHAN
+2 DATE 5 SEP 2025
+1 BIRT
+2 DATE 26 JUL 1943
+2 PLAC Virgínia, Estados Unidos da América
+1 DEAT
+2 DATE 7 JUL 1996
+1 BURI
+2 PLAC Macanie, Shenandoah, Virgínia, Estados Unidos da América
+1 FAMS @F16@
+0 @I40@ INDI
+1 NAME Ruby Aileen /Taylor/
+2 GIVN Ruby Aileen
+2 SURN Taylor
+1 SEX F
+1 _UID B91B448C823B41659D8A117F6FD3C7511854
+1 _FSFTID G212-SFV
+1 CHAN
+2 DATE 5 SEP 2025
+1 BIRT
+2 DATE 26 JUN 1937
+2 PLAC Washington, District of Columbia, United States
+1 DEAT
+1 FAMS @F20@
+0 @F1@ FAM
+1 HUSB @I11@
+1 WIFE @I9@
+1 CHIL @I1@
+1 MARR
+2 DATE 3 JUN 1963
+2 PLAC Manassas, Virgínia, Estados Unidos da América
+0 @F2@ FAM
+1 HUSB @I1@
+1 WIFE @I3@
+1 CHIL @I4@
+1 MARR
+2 DATE 9 FEB 1988
+2 PLAC Orange, Flórida, Estados Unidos da América
+0 @F3@ FAM
+1 HUSB @I1@
+1 WIFE @I2@
+0 @F4@ FAM
+1 HUSB @I8@
+1 WIFE @I4@
+1 CHIL @I7@
+1 CHIL @I5@
+1 CHIL @I6@
+1 MARR
+2 PLAC Fredericksburg, Virgínia, Estados Unidos da América
+0 @F5@ FAM
+1 HUSB @I16@
+1 WIFE @I14@
+1 CHIL @I9@
+1 CHIL @I20@
+1 CHIL @I25@
+1 CHIL @I21@
+1 CHIL @I17@
+1 CHIL @I22@
+1 CHIL @I19@
+1 CHIL @I23@
+1 MARR
+2 DATE 10 SEP 1938
+2 PLAC Tazewell, Virginia, United States
+0 @F6@ FAM
+1 HUSB @I10@
+1 WIFE @I9@
+0 @F7@ FAM
+1 HUSB @I13@
+1 WIFE @I15@
+1 CHIL @I11@
+1 CHIL @I30@
+1 CHIL @I18@
+1 CHIL @I24@
+1 MARR
+2 DATE ABT 1935
+2 PLAC Washington, Distrito da Colombia, Estados Unidos da América
+0 @F8@ FAM
+1 HUSB @I11@
+1 WIFE @I12@
+0 @F9@ FAM
+1 HUSB @I27@
+1 WIFE @I18@
+1 MARR
+2 DATE ABT 1960
+0 @F10@ FAM
+1 HUSB @I26@
+1 WIFE @I18@
+0 @F11@ FAM
+1 HUSB @I20@
+1 WIFE @I28@
+1 MARR
+2 DATE 2 APR 1977
+2 PLAC Alexandria, Virgínia, Estados Unidos da América
+0 @F12@ FAM
+1 HUSB @I31@
+1 WIFE @I22@
+0 @F13@ FAM
+1 HUSB @I21@
+1 WIFE @I29@
+1 MARR
+2 DATE 27 MAR 1967
+2 PLAC Page, Virgínia, Estados Unidos da América
+0 @F14@ FAM
+1 HUSB @I23@
+1 WIFE @I33@
+0 @F15@ FAM
+1 HUSB @I23@
+1 WIFE @I32@
+0 @F16@ FAM
+1 HUSB @I39@
+1 WIFE @I24@
+1 MARR
+2 DATE 17 MAY 1963
+2 PLAC Washington, Distrito da Colombia, Estados Unidos da América
+0 @F17@ FAM
+1 HUSB @I36@
+1 WIFE @I24@
+1 MARR
+2 DATE 10 MAY 1968
+2 PLAC Fairfax, Virgínia, Estados Unidos da América
+0 @F18@ FAM
+1 HUSB @I34@
+1 WIFE @I25@
+1 MARR
+2 DATE 31 JAN 1967
+2 PLAC Manassas, Virgínia, Estados Unidos da América
+0 @F19@ FAM
+1 HUSB @I35@
+1 WIFE @I25@
+0 @F20@ FAM
+1 HUSB @I30@
+1 WIFE @I40@
+1 MARR
+2 DATE ABT 1957
+2 PLAC Virgínia, Estados Unidos da América
+0 @F21@ FAM
+1 HUSB @I30@
+1 WIFE @I37@
+0 @F22@ FAM
+1 HUSB @I30@
+1 WIFE @I38@
+0 _EVDEF BIRT
+1 TYPE P
+1 TITL Birth
+1 ABBR Birth
+1 SENT [person] was born< [Date]>< [PlaceDetails]>< [Place]>.
+1 ROLE Witness
+2 SENT [ThisPerson] witnessed the birth of [person]< [Date]>< [PlaceDetails]>< [
+3 CONC Place]>.
+1 ROLE Doctor
+2 SENT [ThisPerson] delivered [person]< [Date]>< [PlaceDetails]>< [Place]>.
+1 PLAC Y
+1 DATE Y
+1 DESC N
+0 _EVDEF DEAT
+1 TYPE P
+1 TITL Death
+1 ABBR Death
+1 SENT [person] died< [Desc]>< [Date]>< [person:Age]>< [PlaceDetails]>< [Place
+2 CONC ]>.
+1 ROLE Witness
+2 SENT [ThisPerson] witnessed the death of [person]< [Date]>< [PlaceDetails]>< [
+3 CONC Place]>.
+1 PLAC Y
+1 DATE Y
+1 DESC Y
+0 _EVDEF CHR
+1 TYPE P
+1 TITL Christen
+1 ABBR Chr
+1 SENT [person] was christened< [Date]>< [PlaceDetails]>< [Place]>.
+1 ROLE Witness
+2 SENT [ThisPerson] witnessed the christening of [person]< [Date]>< [PlaceDeta
+3 CONC ils]>< [Place]>.
+1 PLAC Y
+1 DATE Y
+1 DESC N
+0 _EVDEF BURI
+1 TYPE P
+1 TITL Burial
+1 ABBR Burial
+1 SENT [person] was buried< [Date]>< [PlaceDetails]>< [Place]>.
+1 ROLE Witness
+2 SENT [ThisPerson] witnessed the burial of [person]< [Date]>< [PlaceDetails]>
+3 CONC < [Place]>.
+1 PLAC Y
+1 DATE Y
+1 DESC N
+0 _EVDEF CREM
+1 TYPE P
+1 TITL Cremation
+1 ABBR Cremation
+1 SENT [person] was cremated< [Date]>< [PlaceDetails]>< [Place]>.
+1 ROLE Witness
+2 SENT [ThisPerson] witnessed the cremation of [person]< [Date]>< [PlaceDetail
+3 CONC s]>< [Place]>.
+1 PLAC Y
+1 DATE Y
+1 DESC N
+0 _EVDEF ADOP
+1 TYPE P
+1 TITL Adoption
+1 ABBR Adoption
+1 SENT [person] was adopted< [Date]>< [PlaceDetails]>< [Place]>.
+1 ROLE Witness
+2 SENT [ThisPerson] witnessed the adoption of [person]< [Date]>< [PlaceDetails
+3 CONC ]>< [Place]>.
+1 PLAC Y
+1 DATE Y
+1 DESC N
+0 _EVDEF BAPM
+1 TYPE P
+1 TITL Baptism
+1 ABBR Baptism
+1 SENT [person] was baptized< [Date]>< [PlaceDetails]>< [Place]>.
+1 ROLE Witness
+2 SENT [ThisPerson] witnessed the baptism of [person]< [Date]>< [PlaceDetails]
+3 CONC >< [Place]>.
+1 PLAC Y
+1 DATE Y
+1 DESC N
+0 _EVDEF BARM
+1 TYPE P
+1 TITL Bar Mitzvah
+1 ABBR Bar Mitzvah
+1 SENT [person] celebrated his bar mitzvah< [Date]>< [PlaceDetails]>< [Place]>
+2 CONC .
+1 ROLE Witness
+2 SENT [ThisPerson] witnessed the bar mitzvah of [person]< [Date]>< [PlaceDeta
+3 CONC ils]>< [Place]>.
+1 PLAC Y
+1 DATE Y
+1 DESC N
+0 _EVDEF BASM
+1 TYPE P
+1 TITL Bas Mitzvah
+1 ABBR Bas Mitzvah
+1 SENT [person] celebrated her bas mitzvah< [Date]>< [PlaceDetails]>< [Place]>
+2 CONC .
+1 ROLE Witness
+2 SENT [ThisPerson] witnessed the bas mitzvah of [person]< [Date]>< [PlaceDeta
+3 CONC ils]>< [Place]>.
+1 PLAC Y
+1 DATE Y
+1 DESC N
+0 _EVDEF BLES
+1 TYPE P
+1 TITL Blessing
+1 ABBR Blessing
+1 SENT [person] was blessed< [Date]>< [PlaceDetails]>< [Place]>.
+1 ROLE Witness
+2 SENT [ThisPerson] witnessed the blessing of [person]< [Date]>< [PlaceDetails
+3 CONC ]>< [Place]>.
+1 PLAC Y
+1 DATE Y
+1 DESC N
+0 _EVDEF CHRA
+1 TYPE P
+1 TITL Christen (adult)
+1 ABBR Chr (adult)
+1 SENT [person] was christened< [Date]>< [PlaceDetails]>< [Place]>.
+1 ROLE Witness
+2 SENT [ThisPerson] witnessed the christening of [person]< [Date]>< [PlaceDeta
+3 CONC ils]>< [Place]>.
+1 PLAC Y
+1 DATE Y
+1 DESC N
+0 _EVDEF CONF
+1 TYPE P
+1 TITL Confirmation
+1 ABBR Confirmation
+1 SENT [person] was confirmed< [Date]>< [PlaceDetails]>< [Place]>.
+1 ROLE Witness
+2 SENT [ThisPerson] witnessed the confirmation of [person]< [Date]>< [PlaceDet
+3 CONC ails]>< [Place]>.
+1 PLAC Y
+1 DATE Y
+1 DESC N
+0 _EVDEF FCOM
+1 TYPE P
+1 TITL First communion
+1 ABBR First comm
+1 SENT [person] received first communion< [Date]>< [PlaceDetails]>< [Place]>.
+1 ROLE Witness
+2 SENT [ThisPerson] witnessed the first communion of [person]< [Date]>< [Place
+3 CONC Details]>< [Place]>.
+1 PLAC Y
+1 DATE Y
+1 DESC N
+0 _EVDEF ORDN
+1 TYPE P
+1 TITL Ordination
+1 ABBR Ordination
+1 SENT [person] was ordained< [Date]>< [PlaceDetails]>< [Place]>.
+1 ROLE Witness
+2 SENT [ThisPerson] witnessed the ordination of [person]< [Date]>< [PlaceDetai
+3 CONC ls]>< [Place]>.
+1 PLAC Y
+1 DATE Y
+1 DESC N
+0 _EVDEF NATU
+1 TYPE P
+1 TITL Naturalization
+1 ABBR Naturalization
+1 SENT [person] was naturalized< [Date]>< [PlaceDetails]>< [Place]>.
+1 ROLE Witness
+2 SENT [ThisPerson] witnessed the naturalization of [person]< [Date]>< [PlaceD
+3 CONC etails]>< [Place]>.
+1 PLAC Y
+1 DATE Y
+1 DESC N
+0 _EVDEF EMIG
+1 TYPE P
+1 TITL Emigration
+1 ABBR Emigration
+1 SENT [person] emigrated< [Date]>< from [Place:plain]>< [PlaceDetails]>.
+1 ROLE Witness
+2 SENT [ThisPerson] witnessed the emigration of [person]< [Date]>< [PlaceDetai
+3 CONC ls]>< [Place]>.
+1 PLAC Y
+1 DATE Y
+1 DESC N
+0 _EVDEF IMMI
+1 TYPE P
+1 TITL Immigration
+1 ABBR Immigration
+1 SENT [person] immigrated< [Date]>< to [Place:plain]>< [PlaceDetails]>.
+1 ROLE Witness
+2 SENT [ThisPerson] witnessed the immigration of [person]< [Date]>< [PlaceDeta
+3 CONC ils]>< [Place]>.
+1 PLAC Y
+1 DATE Y
+1 DESC N
+0 _EVDEF CENS
+1 TYPE P
+1 TITL Census
+1 ABBR Census
+1 SENT [person] appeared in the census< [Date]>< [PlaceDetails]>< [Place]>.
+1 ROLE Witness
+2 SENT [ThisPerson] appeared in the household of [person] in the census< [Date
+3 CONC ]>< [PlaceDetails]>< [Place]>.
+1 PLAC Y
+1 DATE Y
+1 DESC N
+0 _EVDEF PROB
+1 TYPE P
+1 TITL Probate
+1 ABBR Probate
+1 SENT [person] had [person:hisher] estate probated< [Date]>< [PlaceDetails]>< [
+2 CONC Place]>.
+1 ROLE Witness
+2 SENT [ThisPerson] witnessed the probate of [person]< [Date]>< [PlaceDetails]
+3 CONC >< [Place]>.
+1 PLAC Y
+1 DATE Y
+1 DESC N
+0 _EVDEF WILL
+1 TYPE P
+1 TITL Will
+1 ABBR Will
+1 SENT [person] signed a will< [Date]>< [PlaceDetails]>< [Place]>.
+1 ROLE Witness
+2 SENT [ThisPerson] witnessed the will of [person]< [Date]>< [PlaceDetails]>< [
+3 CONC Place]>.
+1 ROLE Heir
+2 SENT [ThisPerson] was named an heir in the will of [person]< [Date]>< [Place
+3 CONC Details]>< [Place]>.
+1 ROLE Executor
+2 SENT [ThisPerson] was named an executor for the will of [person]< [Date]>< [
+3 CONC PlaceDetails]>< [Place]>.
+1 PLAC Y
+1 DATE Y
+1 DESC N
+0 _EVDEF GRAD
+1 TYPE P
+1 TITL Graduation
+1 ABBR Graduation
+1 SENT [person] graduated< [Date]>< [PlaceDetails]>< [Place]>.
+1 ROLE Witness
+2 SENT [ThisPerson] witnessed the graduation of [person]< [Date]>< [PlaceDetai
+3 CONC ls]>< [Place]>.
+1 PLAC Y
+1 DATE Y
+1 DESC N
+0 _EVDEF RETI
+1 TYPE P
+1 TITL Retirement
+1 ABBR Retirement
+1 SENT [person] retired< [Date]>< [PlaceDetails]>< [Place]>.
+1 ROLE Witness
+2 SENT [ThisPerson] witnessed the retirement of [person]< [Date]>< [PlaceDetai
+3 CONC ls]>< [Place]>.
+1 PLAC Y
+1 DATE Y
+1 DESC N
+0 _EVDEF DSCR
+1 TYPE P
+1 TITL Description
+1 ABBR Description
+1 SENT [person] was described as [Desc]< [Date]>< [PlaceDetails]>< [Place]>.
+1 ROLE Witness
+2 SENT [ThisPerson] witnessed the appearance of [person] as [Desc]< [Date]>< [
+3 CONC PlaceDetails]>< [Place]>.
+1 PLAC Y
+1 DATE Y
+1 DESC Y
+0 _EVDEF EDUC
+1 TYPE P
+1 TITL Education
+1 ABBR Education
+1 SENT [person] was educated < [Desc]>< [Date]>< [PlaceDetails]>< [Place]>.
+1 ROLE Witness
+2 SENT [ThisPerson] witnessed the education of [person]< [Date]>< [PlaceDetail
+3 CONC s]>< [Place]>.
+1 PLAC Y
+1 DATE Y
+1 DESC Y
+0 _EVDEF NATI
+1 TYPE P
+1 TITL Nationality
+1 ABBR Nationality
+1 SENT [person] was [Desc]< [Date]>< [PlaceDetails]>< [Place]>.
+1 ROLE Witness
+2 SENT [ThisPerson] witnessed the nationality of [person] as [Desc]< [Date]>< [
+3 CONC PlaceDetails]>< [Place]>.
+1 PLAC Y
+1 DATE Y
+1 DESC Y
+0 _EVDEF OCCU
+1 TYPE P
+1 TITL Occupation
+1 ABBR Occupation
+1 SENT [date] [person] was [Desc:A]< [PlaceDetails]>< [Place]>.
+1 ROLE Witness
+2 SENT [ThisPerson] witnessed the occupation of [person]< [Date]> as [Desc:A]< [
+3 CONC PlaceDetails]>< [Place]>.
+1 PLAC Y
+1 DATE Y
+1 DESC Y
+0 _EVDEF PROP
+1 TYPE P
+1 TITL Property
+1 ABBR Property
+1 SENT [person] owned [Desc]< [Date]>< [PlaceDetails]>< [Place]>.
+1 ROLE Witness
+2 SENT [ThisPerson] witnessed the property of [person] as [Desc:A]< [Date]>< [
+3 CONC PlaceDetails]>< [Place]>.
+1 PLAC Y
+1 DATE Y
+1 DESC Y
+0 _EVDEF RELI
+1 TYPE P
+1 TITL Religion
+1 ABBR Religion
+1 SENT [person] was [Desc]< [Date]>< [PlaceDetails]>< [Place]>.
+1 ROLE Witness
+2 SENT [ThisPerson] witnessed the religion of [person] as [Desc:A]< [Date]>< [
+3 CONC PlaceDetails]>< [Place]>.
+1 PLAC Y
+1 DATE Y
+1 DESC Y
+0 _EVDEF RESI
+1 TYPE P
+1 TITL Residence
+1 ABBR Residence
+1 SENT [person] lived< [Desc]>< [PlaceDetails]>< [Place]>< [Date]>.
+1 ROLE Witness
+2 SENT [ThisPerson] lived in the residence of [person] < [PlaceDetails]>< [Pla
+3 CONC ce]>< [Date]>.
+1 PLAC Y
+1 DATE Y
+1 DESC Y
+0 _EVDEF SSN
+1 TYPE P
+1 TITL Soc Sec No
+1 ABBR SSN
+1 SENT [person] had Social Security Number [Desc].
+1 PLAC N
+1 DATE N
+1 DESC Y
+0 _EVDEF BAPL
+1 TYPE P
+1 TITL LDS Baptism
+1 ABBR LDS Bapt
+1 SENT [person] was baptized into the LDS Church< [Date]>< [PlaceDetails]>< [P
+2 CONC lace]>.
+1 ROLE Witness
+2 SENT [ThisPerson] witnessed the baptism of [person] into the LDS Church< [Da
+3 CONC te]>< [PlaceDetails]>< [Place]>.
+1 PLAC Y
+1 DATE Y
+1 DESC N
+0 _EVDEF ENDL
+1 TYPE P
+1 TITL LDS Endowment
+1 ABBR LDS Endow
+1 SENT [person] was endowed< [Date]>< [PlaceDetails]>< [Place]>.
+1 ROLE Witness
+2 SENT [ThisPerson] witnessed the endowment of [person]< [Date]>< [PlaceDetail
+3 CONC s]>< [Place]>.
+1 PLAC Y
+1 DATE Y
+1 DESC N
+0 _EVDEF SLGC
+1 TYPE P
+1 TITL LDS Seal to parents
+1 ABBR LDS SealPar
+1 SENT [person] was sealed to [person:hisher] parents< [Date]>< [PlaceDetails]
+2 CONC >< [Place]>.
+1 ROLE Witness
+2 SENT [ThisPerson] witnessed the sealed to parents of [person]< [Date]>< [Pla
+3 CONC ceDetails]>< [Place]>.
+1 PLAC Y
+1 DATE Y
+1 DESC N
+0 _EVDEF AFN
+1 TYPE P
+1 TITL Ancestral File Number
+1 ABBR AFN
+1 SENT [person] has Ancestral File Number [Desc].
+1 PLAC N
+1 DATE N
+1 DESC Y
+0 _EVDEF REFN
+1 TYPE P
+1 TITL Reference No
+1 ABBR Ref #
+1 SENT [person] has reference number [Desc].
+1 PLAC N
+1 DATE N
+1 DESC Y
+0 _EVDEF CAST
+1 TYPE P
+1 TITL Caste
+1 ABBR Caste
+1 SENT [person] was associated with [Desc]< [Date]>< [PlaceDetails]>< [Place]>
+2 CONC .
+1 ROLE Witness
+2 SENT [ThisPerson] witnessed the associated with [Desc] of [person]< [Date]>< [
+3 CONC PlaceDetails]>< [Place]>.
+1 PLAC Y
+1 DATE Y
+1 DESC Y
+0 _EVDEF TITL
+1 TYPE P
+1 TITL Title (Nobility)
+1 ABBR Title
+1 SENT [person] held the title of [Desc]< [Date]>< [PlaceDetails]>< [Place]>.
+1 PLAC Y
+1 DATE Y
+1 DESC Y
+0 _EVDEF CONL
+1 TYPE P
+1 TITL LDS Confirmation
+1 ABBR LDS Conf
+1 SENT [person] was confirmed a member of the LDS Church< [Date]>< [PlaceDetai
+2 CONC ls]>< [Place]>.
+1 ROLE Witness
+2 SENT [ThisPerson] witnessed the confirmation of [person] as a member of the L
+3 CONC DS Church< [Date]>< [PlaceDetails]>< [Place]>.
+1 PLAC Y
+1 DATE Y
+1 DESC N
+0 _EVDEF WAC
+1 TYPE P
+1 TITL LDS Initiatory
+1 ABBR LDS Init
+1 SENT [person] received LDS initiatory< [Date]>< [PlaceDetails]>< [Place]>.
+1 ROLE Witness
+2 SENT [ThisPerson] witnessed the LDS initiatory of [person]< [Date]>< [PlaceD
+3 CONC etails]>< [Place]>.
+1 PLAC Y
+1 DATE Y
+1 DESC N
+0 _EVDEF MARR
+1 TYPE F
+1 TITL Marriage
+1 ABBR Marriage
+1 SENT [couple] <#Couple#was|were> married< [Date]>< [PlaceDetails]>< [Place]>
+2 CONC .
+1 ROLE Witness
+2 SENT [ThisPerson] witnessed the marriage of [couple]< [Date]>< [PlaceDetails
+3 CONC ]>< [Place]>.
+1 PLAC Y
+1 DATE Y
+1 DESC N
+0 _EVDEF ANUL
+1 TYPE F
+1 TITL Annulment
+1 ABBR Annulment
+1 SENT [couple] had their marriage annulled< [Date]>< [PlaceDetails]>< [Place]
+2 CONC >.
+1 ROLE Witness
+2 SENT [ThisPerson] witnessed the annulment of the marriage of [couple]< [Date
+3 CONC ]>< [PlaceDetails]>< [Place]>.
+1 PLAC Y
+1 DATE Y
+1 DESC N
+0 _EVDEF DIV
+1 TYPE F
+1 TITL Divorce
+1 ABBR Divorce
+1 SENT [couple] <#Couple#was|were> divorced< [Date]>< [PlaceDetails]>< [Place]
+2 CONC >.
+1 ROLE Witness
+2 SENT [ThisPerson] witnessed the divorce of [couple]< [Date]>< [PlaceDetails]
+3 CONC >< [Place]>.
+1 PLAC Y
+1 DATE Y
+1 DESC N
+0 _EVDEF DIVF
+1 TYPE F
+1 TITL Divorce filed
+1 ABBR Div. filed
+1 SENT [couple] filed for divorce< [Date]>< [PlaceDetails]>< [Place]>.
+1 ROLE Witness
+2 SENT [ThisPerson] witnessed the divorce filing of [couple]< [Date]>< [PlaceD
+3 CONC etails]>< [Place]>.
+1 PLAC Y
+1 DATE Y
+1 DESC N
+0 _EVDEF ENGA
+1 TYPE F
+1 TITL Engagement
+1 ABBR Engagement
+1 SENT [couple] <#Couple#was|were> engaged< [Date]>< [PlaceDetails]>< [Place]>
+2 CONC .
+1 ROLE Witness
+2 SENT [ThisPerson] witnessed the engagement of [couple]< [Date]>< [PlaceDetai
+3 CONC ls]>< [Place]>.
+1 PLAC Y
+1 DATE Y
+1 DESC N
+0 _EVDEF MARB
+1 TYPE F
+1 TITL Marriage Bann
+1 ABBR Marr Bann
+1 SENT [couple] had marriage banns published< [Date]>< [PlaceDetails]>< [Place
+2 CONC ]>.
+1 ROLE Witness
+2 SENT [ThisPerson] witnessed the publishing of the marriage banns of [couple]
+3 CONC <[Date]>< [PlaceDetails]>< [Place]>.
+1 PLAC Y
+1 DATE Y
+1 DESC N
+0 _EVDEF MARC
+1 TYPE F
+1 TITL Marriage Contract
+1 ABBR Marr Contract
+1 SENT [couple] signed a marriage contract< [Date]>< [PlaceDetails]>< [Place]>
+2 CONC .
+1 ROLE Witness
+2 SENT [ThisPerson] witnessed the marriage contract of [couple]< [Date]>< [Pla
+3 CONC ceDetails]>< [Place]>.
+1 PLAC Y
+1 DATE Y
+1 DESC N
+0 _EVDEF MARL
+1 TYPE F
+1 TITL Marriage License
+1 ABBR Marr Lic
+1 SENT [couple] obtained a marriage license< [Date]>< [PlaceDetails]>< [Place]
+2 CONC >.
+1 ROLE Witness
+2 SENT [ThisPerson] witnessed the obtaining of the marriage license by [couple
+3 CONC ]< [Date]>< [PlaceDetails]>< [Place]>.
+1 PLAC Y
+1 DATE Y
+1 DESC N
+0 _EVDEF MARS
+1 TYPE F
+1 TITL Marriage Settlement
+1 ABBR Marr Settlement
+1 SENT [couple] obtained a marriage settlement< [Date]>< [PlaceDetails]>< [Pla
+2 CONC ce]>.
+1 ROLE Witness
+2 SENT [ThisPerson] witnessed the marriage settlement of [couple]< [Date]>< [P
+3 CONC laceDetails]>< [Place]>.
+1 PLAC Y
+1 DATE Y
+1 DESC N
+0 _EVDEF SLGS
+1 TYPE F
+1 TITL LDS Seal to spouse
+1 ABBR LDS SealSp
+1 SENT [couple] were sealed together< [Date]>< [PlaceDetails]>< [Place]>.
+1 ROLE Witness
+2 SENT [ThisPerson] witnessed the sealing of [couple]< [Date]>< [PlaceDetails]
+3 CONC >< [Place]>.
+1 PLAC Y
+1 DATE Y
+1 DESC N
+0 _EVDEF RESI
+1 TYPE F
+1 TITL Residence (family)
+1 ABBR Residence (fam)
+1 SENT [couple] lived < [Desc]>< [PlaceDetails]>< [Place]>< [Date]>.
+1 PLAC Y
+1 DATE Y
+1 DESC Y
+0 _EVDEF CENS
+1 TYPE F
+1 TITL Census (family)
+1 ABBR Census (fam)
+1 SENT [couple] appeared in the census< [Date]>< [PlaceDetails]>< [Place]>.
+1 ROLE Witness
+2 SENT [ThisPerson] appeared in the census in the household of [couple]< [Date
+3 CONC ]>< [PlaceDetails]>< [Place]>.
+1 PLAC Y
+1 DATE Y
+1 DESC N
+0 _EVDEF Degree
+1 TYPE P
+1 TITL Degree
+1 ABBR Degree
+1 SENT [person] received a< [desc]> degree< [Date]>< [PlaceDetails]>< [Place]>
+2 CONC .
+1 ROLE Witness
+2 SENT [ThisPerson] witnessed the degree of [person]< [Date]>< [PlaceDetails]>
+3 CONC < [Place]>.
+1 PLAC Y
+1 DATE Y
+1 DESC Y
+0 _EVDEF Military
+1 TYPE P
+1 TITL Military
+1 ABBR Military
+1 SENT [person] served in the military< [Desc]>< [Date]>< [PlaceDetails]>< [Pl
+2 CONC ace]>.
+1 ROLE Witness
+2 SENT [ThisPerson] witnessed the military service of [person]< [Date]>< [Plac
+3 CONC eDetails]>< [Place]>.
+1 PLAC Y
+1 DATE Y
+1 DESC Y
+0 _EVDEF Mission
+1 TYPE P
+1 TITL Mission
+1 ABBR Mission
+1 SENT [person] served a mission< [Date]>< [PlaceDetails]>< [Place]>.
+1 ROLE Witness
+2 SENT [ThisPerson] witnessed the mission of [person]< [Date]>< [PlaceDetails]
+3 CONC >< [Place]>.
+1 PLAC Y
+1 DATE Y
+1 DESC Y
+0 _EVDEF Stillborn
+1 TYPE P
+1 TITL Stillborn
+1 ABBR Stillborn
+1 SENT [person] was stillborn< [Date]>< [PlaceDetails]>< [Place]>.
+1 ROLE Witness
+2 SENT [ThisPerson] witnessed the stillbirth of [person]< [Date]>< [PlaceDetai
+3 CONC ls]>< [Place]>.
+1 PLAC Y
+1 DATE Y
+1 DESC N
+0 _EVDEF Illness
+1 TYPE P
+1 TITL Illness
+1 ABBR Illness
+1 SENT [person] was ill< with [Desc]>< [Date]>< [PlaceDetails]>< [Place]>.
+1 ROLE Witness
+2 SENT [ThisPerson] witnessed the illness of [person] with [Desc]< [Date]>< [P
+3 CONC laceDetails]>< [Place]>.
+1 PLAC Y
+1 DATE Y
+1 DESC Y
+0 _EVDEF Living
+1 TYPE P
+1 TITL Living
+1 ABBR Living
+1 SENT [person] was living< [Date]>< [PlaceDetails]>< [Place]>.
+1 PLAC Y
+1 DATE Y
+1 DESC N
+0 _EVDEF Elected
+1 TYPE P
+1 TITL Election
+1 ABBR Elected
+1 SENT [person] was elected< as [Desc]>< [Date]>< [PlaceDetails]>< [Place]>.
+1 ROLE Witness
+2 SENT [ThisPerson] witnessed the election of [person] as [Desc]< [Date]>< [Pl
+3 CONC aceDetails]>< [Place]>.
+1 PLAC Y
+1 DATE Y
+1 DESC Y
+0 _EVDEF Excomm
+1 TYPE P
+1 TITL Excommunication
+1 ABBR Excomm
+1 SENT [person] was excommunicated< [Date]>< [PlaceDetails]>< [Place]>.
+1 ROLE Witness
+2 SENT [ThisPerson] witnessed the excommunication of [person]< [Date]>< [Place
+3 CONC Details]>< [Place]>.
+1 PLAC Y
+1 DATE Y
+1 DESC N
+0 _EVDEF Namesake
+1 TYPE P
+1 TITL Namesake
+1 ABBR Namesake
+1 SENT [person] was named after [Desc]< [Date]>< [PlaceDetails]>< [Place]>.
+1 PLAC Y
+1 DATE Y
+1 DESC Y
+0 _EVDEF Separation
+1 TYPE F
+1 TITL Separation
+1 ABBR Separation
+1 SENT [couple] were separated< [Date]>< [PlaceDetails]>< [Place]>.
+1 ROLE Witness
+2 SENT [ThisPerson] witnessed the separation of [couple]< [Date]>< [PlaceDetai
+3 CONC ls]>< [Place]>.
+1 PLAC Y
+1 DATE Y
+1 DESC N
+0 _EVDEF Alt. Name
+1 TYPE P
+1 TITL Alternate name
+1 ABBR Alt. Name
+1 SENT [person] was also known as [Desc]< [Date]>.
+1 PLAC N
+1 DATE Y
+1 DESC N
+0 _EVDEF _DNA
+1 TYPE P
+1 TITL DNA test
+1 ABBR DNA
+1 SENT [person] had a DNA test performed< [Date]>.
+1 PLAC N
+1 DATE Y
+1 DESC N
+0 _EVDEF Association
+1 TYPE P
+1 TITL Association
+1 ABBR Association
+1 PLAC Y
+1 DATE Y
+1 DESC Y
+0 _EVDEF Misc
+1 TYPE P
+1 TITL Miscellaneous
+1 ABBR Misc
+1 SENT [person]< [Desc]>< [Date]>< [PlaceDetails]>< [Place]>.
+1 ROLE Witness
+2 SENT [person]< [Desc]>< [Date]>< [PlaceDetails]>< [Place]>.
+1 PLAC Y
+1 DATE Y
+1 DESC Y
+0 TRLR
